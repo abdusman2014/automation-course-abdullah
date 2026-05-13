@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Course — Zapier & n8n</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #E8640A;
+    --orange-light: #FEF0E6;
+    --orange-mid: #F7C8A0;
+    --blue: #1A56A0;
+    --blue-light: #EBF2FB;
+    --blue-mid: #B5D4F4;
+    --green: #2E7D52;
+    --green-light: #EAF5EE;
+    --text: #1A1A1A;
+    --text-muted: #666;
+    --text-light: #999;
+    --border: #E5E0D8;
+    --bg: #FAFAF7;
+    --white: #FFFFFF;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--text);
+    color: #fff;
+    padding: 10px 40px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topbar span { opacity: 0.5; }
+  .topbar strong { opacity: 1; color: #fff; }
+
+  /* HERO */
+  .hero {
+    background: var(--text);
+    color: #fff;
+    padding: 80px 40px 70px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(232,100,10,0.12);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 10%;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(26,86,160,0.15);
+  }
+  .hero-inner { max-width: 820px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(232,100,10,0.2);
+    color: #F7A96A;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(232,100,10,0.3);
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.1;
+    font-weight: 400;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  .hero h1 em { color: #F7A96A; font-style: italic; }
+  .hero p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { display: flex; flex-direction: column; gap: 2px; }
+  .hero-stat .num {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .hero-stat .label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .hero-divider { width: 1px; background: rgba(255,255,255,0.1); }
+
+  /* NAV */
+  .phase-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .phase-nav-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+  }
+  .phase-nav a {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 14px 20px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .phase-nav a:hover { color: var(--text); border-bottom-color: var(--border); }
+  .phase-nav a.orange:hover { color: var(--orange); border-bottom-color: var(--orange); }
+  .phase-nav a.blue:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* MAIN CONTENT */
+  main { max-width: 820px; margin: 0 auto; padding: 60px 40px; }
+
+  section { margin-bottom: 72px; }
+
+  /* SECTION HEADERS */
+  .section-header { margin-bottom: 32px; }
+  .phase-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+  .phase-tag.orange { background: var(--orange-light); color: var(--orange); border: 1px solid var(--orange-mid); }
+  .phase-tag.blue { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
+  .phase-tag.green { background: var(--green-light); color: var(--green); border: 1px solid #A8D8BC; }
+
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .section-header p {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+
+  /* RESOURCE CARDS */
+  .resource-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .resource-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06); }
+  .resource-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .resource-card.orange::before { background: linear-gradient(90deg, var(--orange), #F4A55C); }
+  .resource-card.blue::before { background: linear-gradient(90deg, var(--blue), #5B9BD5); }
+
+  .resource-number {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .resource-number.orange { background: var(--orange-light); color: var(--orange); }
+  .resource-number.blue { background: var(--blue-light); color: var(--blue); }
+
+  .resource-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .resource-card .free-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    background: var(--green-light);
+    color: var(--green);
+    border: 1px solid #A8D8BC;
+    margin-left: 8px;
+    vertical-align: 2px;
+  }
+  .resource-card p {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+  .resource-card .why {
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--bg);
+    border-left: 3px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+  }
+  .resource-card .why strong { color: var(--text-muted); font-weight: 500; }
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+  .resource-link:hover { background: var(--bg); border-color: #ccc; }
+  .resource-link svg { width: 13px; height: 13px; opacity: 0.5; }
+
+  /* CHALLENGE BOXES */
+  .challenge-box {
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin: 28px 0;
+  }
+  .challenge-box.orange {
+    background: var(--orange-light);
+    border: 1px solid var(--orange-mid);
+  }
+  .challenge-box.blue {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-mid);
+  }
+  .challenge-box h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .challenge-box.orange h4 { color: var(--orange); }
+  .challenge-box.blue h4 { color: var(--blue); }
+  .challenge-box .challenge-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .challenge-box .challenge-item:last-child { margin-bottom: 0; }
+  .challenge-item-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .orange .challenge-item-icon { background: rgba(232,100,10,0.15); color: var(--orange); }
+  .blue .challenge-item-icon { background: rgba(26,86,160,0.15); color: var(--blue); }
+  .challenge-item-text { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .challenge-item-text strong { font-weight: 600; }
+
+  /* WARNING */
+  .warning-box {
+    background: #FFF8ED;
+    border: 1px solid #F5D9A8;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 24px 0;
+    font-size: 14px;
+    color: #7A4F0A;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.6;
+  }
+  .warning-box .icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+
+  /* SCHEDULE TABLE */
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: var(--white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+  }
+  .schedule-table thead tr { background: var(--text); }
+  .schedule-table thead th {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+  .schedule-table tbody tr { border-bottom: 1px solid var(--border); }
+  .schedule-table tbody tr:last-child { border-bottom: none; }
+  .schedule-table tbody tr:nth-child(even) { background: var(--bg); }
+  .schedule-table tbody tr:nth-child(odd) { background: var(--white); }
+  .schedule-table td { padding: 14px 18px; vertical-align: top; line-height: 1.55; color: var(--text); }
+  .schedule-table td:first-child { font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+  .schedule-table .week-phase {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+  .week-phase.orange { background: var(--orange-light); color: var(--orange); }
+  .week-phase.blue { background: var(--blue-light); color: var(--blue); }
+
+  /* TIPS */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .tip-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px;
+    box-shadow: var(--card-shadow);
+  }
+  .tip-card .tip-icon {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .tip-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 7px;
+    color: var(--text);
+  }
+  .tip-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--text);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 32px 40px;
+    font-size: 13px;
+  }
+  footer strong { color: rgba(255,255,255,0.8); }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 72px;
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 50px 24px 50px; }
+    main { padding: 40px 24px; }
+    .phase-nav-inner { padding: 0 16px; }
+    .resource-card { padding: 22px 20px; }
+    .challenge-box { padding: 22px 20px; }
+    .hero-meta { gap: 20px; }
+    .hero-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <strong>Automation Training — Google Workspace Edition</strong>
+  <span>6 Weeks · Free Resources Only</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Your Learning Journey</div>
+    <h1>From zero to<br><em>automation expert</em></h1>
+    <p>This course will teach you to use Zapier and n8n to automate repetitive tasks in Gmail, Google Sheets, Drive, and Forms — no coding required.</p>
+    <div class="hero-meta">
+      <div class="hero-stat">
+        <span class="num">6</span>
+        <span class="label">Weeks</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="num">5–10h</span>
+        <span class="label">Per week</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="num">100%</span>
+        <span class="label">Free resources</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="num">4</span>
+        <span class="label">Real projects</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="phase-nav" aria-label="Course sections">
+  <div class="phase-nav-inner">
+    <a href="#overview">Overview</a>
+    <a href="#phase1" class="orange">Phase 1 — Zapier</a>
+    <a href="#phase2" class="blue">Phase 2 — n8n</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#tips">Tips</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header">
+      <div class="phase-tag green">Course Overview</div>
+      <h2>What you will learn</h2>
+      <p>By the end of this course you will be able to automate real tasks from your own job — independently, without asking for help.</p>
+    </div>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">⚡</div>
+        <h4>Build real automations</h4>
+        <p>Connect Gmail, Sheets, Drive and Forms together to handle repetitive tasks automatically.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔗</div>
+        <h4>Understand triggers & actions</h4>
+        <p>Learn how event-driven workflows work — the mental model behind every automation tool.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🧠</div>
+        <h4>Graduate to n8n</h4>
+        <p>Move to a more powerful tool for logic-heavy workflows with filters, conditions, and AI.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🚀</div>
+        <h4>Automate your own role</h4>
+        <p>By Week 6, you will build an original automation that saves you real time every week.</p>
+      </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 28px;">
+      <span class="icon">💡</span>
+      <div><strong>The most important rule in this course:</strong> Do not just watch. At every stage, pause the video and build what you just saw in your own Zapier or n8n account. The learning only sticks when you build something real.</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PHASE 1 -->
+  <section id="phase1">
+    <div class="section-header">
+      <div class="phase-tag orange">🟠 Phase 1 · Weeks 1–3</div>
+      <h2>Zapier — your starting point</h2>
+      <p>Zapier is the easiest automation tool to learn. It has a visual drag-and-drop interface and connects to all your Google Workspace apps out of the box. You will build your confidence here before moving to n8n.</p>
+    </div>
+
+    <!-- Resource 1 -->
+    <div class="resource-card orange">
+      <div class="resource-number orange">1</div>
+      <h3>Zapier Official "From A to Zap" <span class="free-badge">Free</span></h3>
+      <p>A three-course program made by Zapier itself — always up to date. Covers automating your work, building your first Zap step-by-step, and customizing with multi-step workflows. Completable in under an hour. <strong>Start here. Do this first.</strong></p>
+      <div class="why"><strong>Why it fits you:</strong> The course uses Gmail and Google Sheets as its primary examples throughout — exactly the tools you use every day.</div>
+      <a class="resource-link" href="https://learn.zapier.com/path/zapier-basics-from-a-to-zap" target="_blank">
+        learn.zapier.com
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+
+    <!-- Resource 2 -->
+    <div class="resource-card orange">
+      <div class="resource-number orange">2</div>
+      <h3>Full Zapier Tutorial for Beginners 2024 — The Social Guide <span class="free-badge">Free · YouTube</span></h3>
+      <p>A comprehensive video guide designed for people completely new to automation. It reinforces the official course with a different teaching style — more visual and narrative. Watch it alongside your Zapier account: pause, build, continue.</p>
+      <div class="why"><strong>Why it fits you:</strong> Seeing the same concepts explained a second way is one of the fastest paths to true understanding.</div>
+      <a class="resource-link" href="https://www.classcentral.com/course/youtube-full-zapier-tutorial-for-beginners-2024-step-by-step-336747" target="_blank">
+        classcentral.com
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+
+    <div class="warning-box">
+      <span class="icon">⚠️</span>
+      <div><strong>About Zapier's free plan:</strong> The free tier allows 5 Zaps and 100 tasks per month — enough to learn and practice. Focus your practice automations on Google Workspace connections (Gmail, Sheets, Drive, Forms) to stay within limits while building the skills most relevant to your job.</div>
+    </div>
+
+    <!-- Challenge -->
+    <div class="challenge-box orange">
+      <h4>✅ Your Week 1–3 Challenges</h4>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">A</div>
+        <div class="challenge-item-text"><strong>Form → Email:</strong> When a Google Form is submitted → automatically send a Gmail notification to yourself confirming the submission.</div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">B</div>
+        <div class="challenge-item-text"><strong>Sheet → Email:</strong> When a new row is added to a Google Sheet → automatically send a Gmail summary with the row's content.</div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">C</div>
+        <div class="challenge-item-text"><strong>Drive → Sheet log:</strong> When a new file is added to a Google Drive folder → automatically log the file name and date in a Google Sheet.</div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">★</div>
+        <div class="challenge-item-text"><strong>Bonus — your own job:</strong> Find one repetitive task in your daily work and automate it using what you have learned. This is the most important step of Phase 1.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PHASE 2 -->
+  <section id="phase2">
+    <div class="section-header">
+      <div class="phase-tag blue">🔵 Phase 2 · Weeks 4–6</div>
+      <h2>n8n — next level power</h2>
+      <p>n8n is an open-source automation tool that is far more powerful than Zapier. It handles complex logic, conditions, filters, and even AI workflows. You are ready for this once you have built real Zaps in Phase 1 — do not skip Phase 1.</p>
+    </div>
+
+    <!-- Resource 3 -->
+    <div class="resource-card blue">
+      <div class="resource-number blue">3</div>
+      <h3>Master n8n in 2 Hours — Jono Catliff <span class="free-badge">Free · YouTube</span></h3>
+      <p>One of the most complete free resources for n8n beginners. Covers the interface, triggers, actions, variable mapping, filters, switches, merge operations, webhooks, HTTP requests, and Google Drive integration — including how to build a full AI agent.</p>
+      <div class="why"><strong>Why it fits you:</strong> The Google Drive integration section directly applies to your stack. Search "Master n8n in 2 Hours Jono Catliff" on YouTube.</div>
+      <a class="resource-link" href="https://www.classcentral.com/course/youtube-master-n8n-in-2-hours-complete-beginner-s-guide-for-2025-489791" target="_blank">
+        classcentral.com — n8n guide
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+
+    <!-- Resource 4 -->
+    <div class="resource-card blue">
+      <div class="resource-number blue">4</div>
+      <h3>n8n Community Video Course <span class="free-badge">Free · 50+ Videos</span></h3>
+      <p>An actively maintained playlist built by the n8n community, updated weekly. It is designed to be the best n8n course for all levels — from beginner to advanced. Use this as your ongoing reference library after Jono Catliff's guide is done.</p>
+      <div class="why"><strong>Why it fits you:</strong> New videos drop weekly so it always covers the latest n8n features. Bookmark this and return to it regularly.</div>
+      <a class="resource-link" href="https://community.n8n.io/t/50-n8n-video-course-updated-weekly/218703" target="_blank">
+        community.n8n.io
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+
+    <div class="warning-box" style="background: var(--blue-light); border-color: var(--blue-mid); color: #0C447C;">
+      <span class="icon">🛠️</span>
+      <div><strong>Getting started with n8n:</strong> Sign up for the free cloud trial at <a href="https://n8n.io" target="_blank" style="color: var(--blue);">n8n.io</a>. No credit card required. This gives you a working n8n environment in your browser — no installation needed to start learning.</div>
+    </div>
+
+    <!-- Challenge -->
+    <div class="challenge-box blue">
+      <h4>✅ Your Week 4–6 Challenges</h4>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">A</div>
+        <div class="challenge-item-text"><strong>Rebuild in n8n:</strong> Take one automation you already built in Zapier and recreate it in n8n. Notice the differences. n8n gives you more control at every step.</div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">B</div>
+        <div class="challenge-item-text"><strong>Gmail → Sheets with filtering:</strong> Only log emails that contain a specific keyword in the subject line — something Zapier's free tier cannot easily do.</div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">C</div>
+        <div class="challenge-item-text"><strong>Multi-step Google workflow:</strong> A Google Form submission triggers three things at once: log to Sheet, send Gmail confirmation, and create a Drive folder.</div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-item-icon">★</div>
+        <div class="challenge-item-text"><strong>Your own original workflow:</strong> Build one automation from scratch that saves you real time every week. This is your graduation project.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SCHEDULE -->
+  <section id="schedule">
+    <div class="section-header">
+      <div class="phase-tag green">📋 Full Schedule</div>
+      <h2>Week by week</h2>
+      <p>Each week has a clear focus, resources to use, and a hands-on task to complete. Do not move to the next week until you have finished the task.</p>
+    </div>
+
+    <table class="schedule-table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Focus</th>
+          <th>Resources</th>
+          <th>Task to complete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Week 1 <span class="week-phase orange">Zapier</span></td>
+          <td>Zapier basics</td>
+          <td>Official "A to Zap" + YouTube beginner video</td>
+          <td>Google Form → Gmail notification</td>
+        </tr>
+        <tr>
+          <td>Week 2 <span class="week-phase orange">Zapier</span></td>
+          <td>Build real Zaps</td>
+          <td>Zapier free tier practice</td>
+          <td>Sheet → Email + Drive → Sheet log</td>
+        </tr>
+        <tr>
+          <td>Week 3 <span class="week-phase orange">Zapier</span></td>
+          <td>Apply to your job</td>
+          <td>Zapier templates library</td>
+          <td>Automate one real task from your own role</td>
+        </tr>
+        <tr>
+          <td>Week 4 <span class="week-phase blue">n8n</span></td>
+          <td>n8n intro</td>
+          <td>Jono Catliff 2-hour guide</td>
+          <td>Recreate a Zapier workflow in n8n</td>
+        </tr>
+        <tr>
+          <td>Week 5 <span class="week-phase blue">n8n</span></td>
+          <td>n8n intermediate</td>
+          <td>n8n community playlist (first 15 videos)</td>
+          <td>Gmail + Sheets + Drive multi-step workflow</td>
+        </tr>
+        <tr>
+          <td>Week 6+ <span class="week-phase blue">n8n</span></td>
+          <td>Expert building</td>
+          <td>n8n community playlist (ongoing)</td>
+          <td>One fully original automation from scratch</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TIPS -->
+  <section id="tips">
+    <div class="section-header">
+      <div class="phase-tag green">💡 Tips for Success</div>
+      <h2>How to get the most from this course</h2>
+    </div>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🏗️</div>
+        <h4>Always build, never just watch</h4>
+        <p>Pause the video after each concept and recreate what you just saw in your own account. This is non-negotiable.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🎯</div>
+        <h4>Use real tasks from your job</h4>
+        <p>As early as Week 3, automate something you actually do every day. Personal relevance makes everything stick faster.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🐢</div>
+        <h4>Do not rush to n8n</h4>
+        <p>n8n has a steeper learning curve. Employees who skip Phase 1 often struggle. Finish all three Zapier weeks first.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔍</div>
+        <h4>When you get stuck, search n8n community</h4>
+        <p>The n8n community forum is extremely active. Almost every question you will have has already been answered there.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📝</div>
+        <h4>Document your workflows</h4>
+        <p>Add notes and descriptions to every workflow you build. Future-you will thank you — and so will your colleagues.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🤝</div>
+        <h4>Share what you build</h4>
+        <p>Show your automations to your team. Teaching someone else is the fastest way to deepen your own understanding.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Automation Training Program · Google Workspace Edition</p>
+  <p style="margin-top: 6px;">Built for your team · <strong>Free resources only</strong> · Zero to independent in 6 weeks</p>
+</footer>
+
+</body>
+</html>
