@@ -1,770 +1,3102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Automation Course — Zapier & n8n</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Automation Course — Zapier & n8n</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  :root {
-    --orange: #E8640A;
-    --orange-light: #FEF0E6;
-    --orange-mid: #F7C8A0;
-    --blue: #1A56A0;
-    --blue-light: #EBF2FB;
-    --blue-mid: #B5D4F4;
-    --green: #2E7D52;
-    --green-light: #EAF5EE;
-    --text: #1A1A1A;
-    --text-muted: #666;
-    --text-light: #999;
-    --border: #E5E0D8;
-    --bg: #FAFAF7;
-    --white: #FFFFFF;
-    --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-  }
+      :root {
+        --orange: #e8640a;
+        --orange-light: #fef0e6;
+        --orange-mid: #f7c8a0;
+        --blue: #1a56a0;
+        --blue-light: #ebf2fb;
+        --blue-mid: #b5d4f4;
+        --green: #2e7d52;
+        --green-light: #eaf5ee;
+        --text: #1a1a1a;
+        --text-muted: #666;
+        --text-light: #999;
+        --border: #e5e0d8;
+        --bg: #fafaf7;
+        --white: #ffffff;
+        --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06),
+          0 4px 12px rgba(0, 0, 0, 0.04);
+      }
 
-  html { scroll-behavior: smooth; }
+      html {
+        scroll-behavior: smooth;
+      }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.7;
-    font-size: 16px;
-  }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        font-size: 16px;
+      }
 
-  /* TOP BAR */
-  .topbar {
-    background: var(--text);
-    color: #fff;
-    padding: 10px 40px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .topbar span { opacity: 0.5; }
-  .topbar strong { opacity: 1; color: #fff; }
+      /* TOP BAR */
+      .topbar {
+        background: var(--text);
+        color: #fff;
+        padding: 10px 40px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .topbar span {
+        opacity: 0.5;
+      }
+      .topbar strong {
+        opacity: 1;
+        color: #fff;
+      }
 
-  /* HERO */
-  .hero {
-    background: var(--text);
-    color: #fff;
-    padding: 80px 40px 70px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -80px;
-    width: 400px; height: 400px;
-    border-radius: 50%;
-    background: rgba(232,100,10,0.12);
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: -100px; left: 10%;
-    width: 300px; height: 300px;
-    border-radius: 50%;
-    background: rgba(26,86,160,0.15);
-  }
-  .hero-inner { max-width: 820px; margin: 0 auto; position: relative; z-index: 1; }
-  .hero-tag {
-    display: inline-block;
-    background: rgba(232,100,10,0.2);
-    color: #F7A96A;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 5px 14px;
-    border-radius: 100px;
-    margin-bottom: 24px;
-    border: 1px solid rgba(232,100,10,0.3);
-  }
-  .hero h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(36px, 5vw, 56px);
-    line-height: 1.1;
-    font-weight: 400;
-    margin-bottom: 20px;
-    color: #fff;
-  }
-  .hero h1 em { color: #F7A96A; font-style: italic; }
-  .hero p {
-    font-size: 17px;
-    color: rgba(255,255,255,0.65);
-    max-width: 560px;
-    margin-bottom: 36px;
-    line-height: 1.7;
-  }
-  .hero-meta {
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-  .hero-stat { display: flex; flex-direction: column; gap: 2px; }
-  .hero-stat .num {
-    font-size: 22px;
-    font-weight: 600;
-    color: #fff;
-  }
-  .hero-stat .label {
-    font-size: 12px;
-    color: rgba(255,255,255,0.45);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .hero-divider { width: 1px; background: rgba(255,255,255,0.1); }
+      /* HERO */
+      .hero {
+        background: var(--text);
+        color: #fff;
+        padding: 80px 40px 70px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -80px;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: rgba(232, 100, 10, 0.12);
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: -100px;
+        left: 10%;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(26, 86, 160, 0.15);
+      }
+      .hero-inner {
+        max-width: 820px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      .hero-tag {
+        display: inline-block;
+        background: rgba(232, 100, 10, 0.2);
+        color: #f7a96a;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 100px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(232, 100, 10, 0.3);
+      }
+      .hero h1 {
+        font-family: "DM Serif Display", serif;
+        font-size: clamp(36px, 5vw, 56px);
+        line-height: 1.1;
+        font-weight: 400;
+        margin-bottom: 20px;
+        color: #fff;
+      }
+      .hero h1 em {
+        color: #f7a96a;
+        font-style: italic;
+      }
+      .hero p {
+        font-size: 17px;
+        color: rgba(255, 255, 255, 0.65);
+        max-width: 560px;
+        margin-bottom: 36px;
+        line-height: 1.7;
+      }
+      .hero-meta {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+      }
+      .hero-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .hero-stat .num {
+        font-size: 22px;
+        font-weight: 600;
+        color: #fff;
+      }
+      .hero-stat .label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .hero-divider {
+        width: 1px;
+        background: rgba(255, 255, 255, 0.1);
+      }
 
-  /* NAV */
-  .phase-nav {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .phase-nav-inner {
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 0 40px;
-    display: flex;
-    gap: 0;
-  }
-  .phase-nav a {
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    padding: 14px 20px;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-    white-space: nowrap;
-  }
-  .phase-nav a:hover { color: var(--text); border-bottom-color: var(--border); }
-  .phase-nav a.orange:hover { color: var(--orange); border-bottom-color: var(--orange); }
-  .phase-nav a.blue:hover { color: var(--blue); border-bottom-color: var(--blue); }
+      /* NAV */
+      .phase-nav {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .phase-nav-inner {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 0 40px;
+        display: flex;
+        gap: 0;
+      }
+      .phase-nav a {
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+        padding: 14px 20px;
+        border-bottom: 2px solid transparent;
+        transition: color 0.2s, border-color 0.2s;
+        white-space: nowrap;
+      }
+      .phase-nav a:hover {
+        color: var(--text);
+        border-bottom-color: var(--border);
+      }
+      .phase-nav a.green:hover {
+        color: var(--green);
+        border-bottom-color: var(--green);
+      }
 
-  /* MAIN CONTENT */
-  main { max-width: 820px; margin: 0 auto; padding: 60px 40px; }
+      /* PHASE 0 EXERCISES */
+      .concept-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 14px;
+        margin-bottom: 32px;
+      }
+      .concept-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: var(--card-shadow);
+      }
+      .concept-card .concept-icon {
+        font-size: 26px;
+        margin-bottom: 10px;
+      }
+      .concept-card h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: var(--text);
+      }
+      .concept-card p {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+      .concept-card .example {
+        margin-top: 10px;
+        font-size: 12px;
+        background: var(--bg);
+        border-left: 3px solid var(--green);
+        padding: 8px 10px;
+        border-radius: 0 6px 6px 0;
+        color: var(--text);
+        font-family: "DM Mono", monospace;
+        line-height: 1.5;
+      }
 
-  section { margin-bottom: 72px; }
+      /* QUIZ */
+      .quiz-block {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+      }
+      .quiz-block .q-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--green);
+        margin-bottom: 10px;
+      }
+      .quiz-block .q-text {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 18px;
+        line-height: 1.45;
+      }
+      .quiz-block .context-note {
+        font-size: 13px;
+        color: var(--text-muted);
+        background: var(--bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 18px;
+        line-height: 1.55;
+        border: 1px solid var(--border);
+      }
+      .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .quiz-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--white);
+        transition: border-color 0.15s, background 0.15s;
+        text-align: left;
+        width: 100%;
+        font-family: "DM Sans", sans-serif;
+      }
+      .quiz-option:hover:not(:disabled) {
+        border-color: #aaa;
+        background: var(--bg);
+      }
+      .quiz-option.correct {
+        border-color: #2e7d52;
+        background: var(--green-light);
+        color: #1a4d33;
+      }
+      .quiz-option.wrong {
+        border-color: #c0392b;
+        background: #fef0ee;
+        color: #7a1a10;
+      }
+      .quiz-option:disabled {
+        cursor: default;
+      }
+      .quiz-option .opt-indicator {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .quiz-option.correct .opt-indicator {
+        background: #2e7d52;
+        border-color: #2e7d52;
+        color: white;
+      }
+      .quiz-option.wrong .opt-indicator {
+        background: #c0392b;
+        border-color: #c0392b;
+        color: white;
+      }
+      .quiz-feedback {
+        margin-top: 14px;
+        font-size: 13.5px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        display: none;
+        line-height: 1.6;
+      }
+      .quiz-feedback.correct {
+        background: var(--green-light);
+        color: #1a4d33;
+        border: 1px solid #a8d8bc;
+        display: block;
+      }
+      .quiz-feedback.wrong {
+        background: #fef0ee;
+        color: #7a1a10;
+        border: 1px solid #f5c4b3;
+        display: block;
+      }
 
-  /* SECTION HEADERS */
-  .section-header { margin-bottom: 32px; }
-  .phase-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 100px;
-    margin-bottom: 14px;
-  }
-  .phase-tag.orange { background: var(--orange-light); color: var(--orange); border: 1px solid var(--orange-mid); }
-  .phase-tag.blue { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
-  .phase-tag.green { background: var(--green-light); color: var(--green); border: 1px solid #A8D8BC; }
+      /* SCENARIO BUILDER */
+      .scenario-builder {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+      }
+      .scenario-builder h4 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+      .scenario-builder .s-desc {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        line-height: 1.55;
+      }
+      .flow-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .flow-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+      }
+      .flow-label.trigger {
+        background: #fef0e6;
+        color: var(--orange);
+        border: 1px solid var(--orange-mid);
+      }
+      .flow-label.action {
+        background: var(--blue-light);
+        color: var(--blue);
+        border: 1px solid var(--blue-mid);
+      }
+      .flow-label.condition {
+        background: var(--green-light);
+        color: var(--green);
+        border: 1px solid #a8d8bc;
+      }
+      .flow-arrow {
+        color: var(--text-muted);
+        font-size: 18px;
+      }
+      .flow-select {
+        font-size: 13px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1.5px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        cursor: pointer;
+        flex: 1;
+        min-width: 160px;
+      }
+      .flow-select:focus {
+        outline: none;
+        border-color: var(--green);
+      }
+      .flow-result {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+        display: none;
+      }
+      .flow-result.show {
+        display: block;
+      }
+      .flow-result.good {
+        background: var(--green-light);
+        border: 1px solid #a8d8bc;
+        color: #1a4d33;
+      }
+      .flow-result.bad {
+        background: #fff8ed;
+        border: 1px solid #f5d9a8;
+        color: #7a4f0a;
+      }
+      .flow-result strong {
+        font-weight: 600;
+      }
+      .check-btn {
+        margin-top: 16px;
+        padding: 10px 22px;
+        background: var(--text);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        transition: opacity 0.15s;
+      }
+      .check-btn:hover {
+        opacity: 0.85;
+      }
 
-  .section-header h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 32px;
-    font-weight: 400;
-    line-height: 1.15;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
-  .section-header p {
-    font-size: 15px;
-    color: var(--text-muted);
-    max-width: 600px;
-    line-height: 1.7;
-  }
+      /* PROGRESS */
+      .phase0-progress {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px 24px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: var(--card-shadow);
+      }
+      .progress-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+      .progress-bar-wrap {
+        flex: 1;
+        height: 8px;
+        background: var(--bg);
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: var(--green);
+        border-radius: 100px;
+        transition: width 0.4s ease;
+        width: 0%;
+      }
+      .progress-count {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--green);
+        white-space: nowrap;
+      }
+      .phase-nav a.green {
+        color: var(--text-muted);
+      }
+      .phase-nav a.green:hover {
+        color: var(--green);
+        border-bottom-color: var(--green);
+      }
 
-  /* RESOURCE CARDS */
-  .resource-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-    box-shadow: var(--card-shadow);
-    position: relative;
-    overflow: hidden;
-    transition: box-shadow 0.2s;
-  }
-  .resource-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06); }
-  .resource-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .resource-card.orange::before { background: linear-gradient(90deg, var(--orange), #F4A55C); }
-  .resource-card.blue::before { background: linear-gradient(90deg, var(--blue), #5B9BD5); }
+      /* MAIN CONTENT */
+      main {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 60px 40px;
+      }
 
-  .resource-number {
-    display: inline-block;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-  }
-  .resource-number.orange { background: var(--orange-light); color: var(--orange); }
-  .resource-number.blue { background: var(--blue-light); color: var(--blue); }
+      section {
+        margin-bottom: 72px;
+      }
 
-  .resource-card h3 {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--text);
-    line-height: 1.35;
-  }
-  .resource-card .free-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 100px;
-    background: var(--green-light);
-    color: var(--green);
-    border: 1px solid #A8D8BC;
-    margin-left: 8px;
-    vertical-align: 2px;
-  }
-  .resource-card p {
-    font-size: 14.5px;
-    color: var(--text-muted);
-    line-height: 1.65;
-    margin-bottom: 16px;
-  }
-  .resource-card .why {
-    font-size: 13.5px;
-    color: var(--text);
-    background: var(--bg);
-    border-left: 3px solid var(--border);
-    padding: 10px 14px;
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 16px;
-  }
-  .resource-card .why strong { color: var(--text-muted); font-weight: 500; }
-  .resource-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 7px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    color: var(--text);
-    transition: all 0.15s;
-    font-family: 'DM Mono', monospace;
-  }
-  .resource-link:hover { background: var(--bg); border-color: #ccc; }
-  .resource-link svg { width: 13px; height: 13px; opacity: 0.5; }
+      /* SECTION HEADERS */
+      .section-header {
+        margin-bottom: 32px;
+      }
+      .phase-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 100px;
+        margin-bottom: 14px;
+      }
+      .phase-tag.orange {
+        background: var(--orange-light);
+        color: var(--orange);
+        border: 1px solid var(--orange-mid);
+      }
+      .phase-tag.blue {
+        background: var(--blue-light);
+        color: var(--blue);
+        border: 1px solid var(--blue-mid);
+      }
+      .phase-tag.green {
+        background: var(--green-light);
+        color: var(--green);
+        border: 1px solid #a8d8bc;
+      }
 
-  /* CHALLENGE BOXES */
-  .challenge-box {
-    border-radius: 14px;
-    padding: 28px 32px;
-    margin: 28px 0;
-  }
-  .challenge-box.orange {
-    background: var(--orange-light);
-    border: 1px solid var(--orange-mid);
-  }
-  .challenge-box.blue {
-    background: var(--blue-light);
-    border: 1px solid var(--blue-mid);
-  }
-  .challenge-box h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-  }
-  .challenge-box.orange h4 { color: var(--orange); }
-  .challenge-box.blue h4 { color: var(--blue); }
-  .challenge-box .challenge-item {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 14px;
-    align-items: flex-start;
-  }
-  .challenge-box .challenge-item:last-child { margin-bottom: 0; }
-  .challenge-item-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 13px;
-    font-weight: 700;
-    margin-top: 1px;
-  }
-  .orange .challenge-item-icon { background: rgba(232,100,10,0.15); color: var(--orange); }
-  .blue .challenge-item-icon { background: rgba(26,86,160,0.15); color: var(--blue); }
-  .challenge-item-text { font-size: 14px; line-height: 1.55; color: var(--text); }
-  .challenge-item-text strong { font-weight: 600; }
+      .section-header h2 {
+        font-family: "DM Serif Display", serif;
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 1.15;
+        color: var(--text);
+        margin-bottom: 10px;
+      }
+      .section-header p {
+        font-size: 15px;
+        color: var(--text-muted);
+        max-width: 600px;
+        line-height: 1.7;
+      }
 
-  /* WARNING */
-  .warning-box {
-    background: #FFF8ED;
-    border: 1px solid #F5D9A8;
-    border-radius: 12px;
-    padding: 18px 22px;
-    margin: 24px 0;
-    font-size: 14px;
-    color: #7A4F0A;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    line-height: 1.6;
-  }
-  .warning-box .icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+      /* RESOURCE CARDS */
+      .resource-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+      .resource-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08),
+          0 8px 24px rgba(0, 0, 0, 0.06);
+      }
+      .resource-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+      }
+      .resource-card.orange::before {
+        background: linear-gradient(90deg, var(--orange), #f4a55c);
+      }
+      .resource-card.blue::before {
+        background: linear-gradient(90deg, var(--blue), #5b9bd5);
+      }
 
-  /* SCHEDULE TABLE */
-  .schedule-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    background: var(--white);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    border: 1px solid var(--border);
-  }
-  .schedule-table thead tr { background: var(--text); }
-  .schedule-table thead th {
-    padding: 14px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.7);
-  }
-  .schedule-table tbody tr { border-bottom: 1px solid var(--border); }
-  .schedule-table tbody tr:last-child { border-bottom: none; }
-  .schedule-table tbody tr:nth-child(even) { background: var(--bg); }
-  .schedule-table tbody tr:nth-child(odd) { background: var(--white); }
-  .schedule-table td { padding: 14px 18px; vertical-align: top; line-height: 1.55; color: var(--text); }
-  .schedule-table td:first-child { font-weight: 600; color: var(--text-muted); white-space: nowrap; }
-  .schedule-table .week-phase {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 2px 8px;
-    border-radius: 100px;
-    margin-left: 6px;
-    vertical-align: 2px;
-  }
-  .week-phase.orange { background: var(--orange-light); color: var(--orange); }
-  .week-phase.blue { background: var(--blue-light); color: var(--blue); }
+      .resource-number {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+      .resource-number.orange {
+        background: var(--orange-light);
+        color: var(--orange);
+      }
+      .resource-number.blue {
+        background: var(--blue-light);
+        color: var(--blue);
+      }
 
-  /* TIPS */
-  .tips-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-top: 8px;
-  }
-  .tip-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 22px 22px;
-    box-shadow: var(--card-shadow);
-  }
-  .tip-card .tip-icon {
-    font-size: 22px;
-    margin-bottom: 12px;
-  }
-  .tip-card h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 7px;
-    color: var(--text);
-  }
-  .tip-card p {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
+      .resource-card h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text);
+        line-height: 1.35;
+      }
+      .resource-card .free-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 3px 9px;
+        border-radius: 100px;
+        background: var(--green-light);
+        color: var(--green);
+        border: 1px solid #a8d8bc;
+        margin-left: 8px;
+        vertical-align: 2px;
+      }
+      .resource-card p {
+        font-size: 14.5px;
+        color: var(--text-muted);
+        line-height: 1.65;
+        margin-bottom: 16px;
+      }
+      .resource-card .why {
+        font-size: 13.5px;
+        color: var(--text);
+        background: var(--bg);
+        border-left: 3px solid var(--border);
+        padding: 10px 14px;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 16px;
+      }
+      .resource-card .why strong {
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .resource-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 7px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        color: var(--text);
+        transition: all 0.15s;
+        font-family: "DM Mono", monospace;
+      }
+      .resource-link:hover {
+        background: var(--bg);
+        border-color: #ccc;
+      }
+      .resource-link svg {
+        width: 13px;
+        height: 13px;
+        opacity: 0.5;
+      }
 
-  /* FOOTER */
-  footer {
-    background: var(--text);
-    color: rgba(255,255,255,0.4);
-    text-align: center;
-    padding: 32px 40px;
-    font-size: 13px;
-  }
-  footer strong { color: rgba(255,255,255,0.8); }
+      /* CHALLENGE BOXES */
+      .challenge-box {
+        border-radius: 14px;
+        padding: 28px 32px;
+        margin: 28px 0;
+      }
+      .challenge-box.orange {
+        background: var(--orange-light);
+        border: 1px solid var(--orange-mid);
+      }
+      .challenge-box.blue {
+        background: var(--blue-light);
+        border: 1px solid var(--blue-mid);
+      }
+      .challenge-box h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .challenge-box.orange h4 {
+        color: var(--orange);
+      }
+      .challenge-box.blue h4 {
+        color: var(--blue);
+      }
+      .challenge-box .challenge-item {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 14px;
+        align-items: flex-start;
+      }
+      .challenge-box .challenge-item:last-child {
+        margin-bottom: 0;
+      }
+      .challenge-item-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 700;
+        margin-top: 1px;
+      }
+      .orange .challenge-item-icon {
+        background: rgba(232, 100, 10, 0.15);
+        color: var(--orange);
+      }
+      .blue .challenge-item-icon {
+        background: rgba(26, 86, 160, 0.15);
+        color: var(--blue);
+      }
+      .challenge-item-text {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--text);
+      }
+      .challenge-item-text strong {
+        font-weight: 600;
+      }
 
-  /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 0 0 72px;
-  }
+      /* WARNING */
+      .warning-box {
+        background: #fff8ed;
+        border: 1px solid #f5d9a8;
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin: 24px 0;
+        font-size: 14px;
+        color: #7a4f0a;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        line-height: 1.6;
+      }
+      .warning-box .icon {
+        font-size: 18px;
+        margin-top: 1px;
+        flex-shrink: 0;
+      }
 
-  @media (max-width: 600px) {
-    .hero { padding: 50px 24px 50px; }
-    main { padding: 40px 24px; }
-    .phase-nav-inner { padding: 0 16px; }
-    .resource-card { padding: 22px 20px; }
-    .challenge-box { padding: 22px 20px; }
-    .hero-meta { gap: 20px; }
-    .hero-divider { display: none; }
-  }
-</style>
-</head>
-<body>
+      /* SCHEDULE TABLE */
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        background: var(--white);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--border);
+      }
+      .schedule-table thead tr {
+        background: var(--text);
+      }
+      .schedule-table thead th {
+        padding: 14px 18px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .schedule-table tbody tr {
+        border-bottom: 1px solid var(--border);
+      }
+      .schedule-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .schedule-table tbody tr:nth-child(even) {
+        background: var(--bg);
+      }
+      .schedule-table tbody tr:nth-child(odd) {
+        background: var(--white);
+      }
+      .schedule-table td {
+        padding: 14px 18px;
+        vertical-align: top;
+        line-height: 1.55;
+        color: var(--text);
+      }
+      .schedule-table td:first-child {
+        font-weight: 600;
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+      .schedule-table .week-phase {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 2px 8px;
+        border-radius: 100px;
+        margin-left: 6px;
+        vertical-align: 2px;
+      }
+      .week-phase.orange {
+        background: var(--orange-light);
+        color: var(--orange);
+      }
+      .week-phase.blue {
+        background: var(--blue-light);
+        color: var(--blue);
+      }
 
-<div class="topbar">
-  <strong>Automation Training — Abdullah Usman</strong>
-  <span>6 Weeks · Free Resources Only</span>
-</div>
+      /* TIPS */
+      .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 8px;
+      }
+      .tip-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px 22px;
+        box-shadow: var(--card-shadow);
+      }
+      .tip-card .tip-icon {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+      .tip-card h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 7px;
+        color: var(--text);
+      }
+      .tip-card p {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-tag">Your Learning Journey</div>
-    <h1>From zero to<br><em>automation expert</em></h1>
-    <p>This course will teach you to use Zapier and n8n to automate repetitive tasks in Gmail, Google Sheets, Drive, and Forms — no coding required.</p>
-    <div class="hero-meta">
-      <div class="hero-stat">
-        <span class="num">6</span>
-        <span class="label">Weeks</span>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="num">5–10h</span>
-        <span class="label">Per week</span>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="num">100%</span>
-        <span class="label">Free resources</span>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="num">4</span>
-        <span class="label">Real projects</span>
+      /* FOOTER */
+      footer {
+        background: var(--text);
+        color: rgba(255, 255, 255, 0.4);
+        text-align: center;
+        padding: 32px 40px;
+        font-size: 13px;
+      }
+      footer strong {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* DIVIDER */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0 0 72px;
+      }
+
+      @media (max-width: 600px) {
+        .hero {
+          padding: 50px 24px 50px;
+        }
+        main {
+          padding: 40px 24px;
+        }
+        .phase-nav-inner {
+          padding: 0 16px;
+        }
+        .resource-card {
+          padding: 22px 20px;
+        }
+        .challenge-box {
+          padding: 22px 20px;
+        }
+        .hero-meta {
+          gap: 20px;
+        }
+        .hero-divider {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <strong>Automation Training — Abdullah Usman</strong>
+      <span>6 Weeks · Free Resources Only</span>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-tag">Your Learning Journey</div>
+        <h1>From zero to<br /><em>automation expert</em></h1>
+        <p>
+          This course will teach you to use Zapier and n8n to automate
+          repetitive tasks in Gmail, Google Sheets, Drive, and Forms — no coding
+          required.
+        </p>
+        <p
+          style="
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 28px;
+            margin-top: -16px;
+          "
+        >
+          Designed by
+          <strong style="color: rgba(255, 255, 255, 0.75)">Abdullah Usman</strong>
+        </p>
+        <div class="hero-meta">
+          <div class="hero-stat">
+            <span class="num">6</span>
+            <span class="label">Weeks</span>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-stat">
+            <span class="num">5–10h</span>
+            <span class="label">Per week</span>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-stat">
+            <span class="num">100%</span>
+            <span class="label">Free resources</span>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-stat">
+            <span class="num">4</span>
+            <span class="label">Real projects</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- STICKY NAV -->
-<nav class="phase-nav" aria-label="Course sections">
-  <div class="phase-nav-inner">
-    <a href="#overview">Overview</a>
-    <a href="#phase1" class="orange">Phase 1 — Zapier</a>
-    <a href="#phase2" class="blue">Phase 2 — n8n</a>
-    <a href="#schedule">Schedule</a>
-    <a href="#tips">Tips</a>
-  </div>
-</nav>
-
-<main>
-
-  <!-- OVERVIEW -->
-  <section id="overview">
-    <div class="section-header">
-      <div class="phase-tag green">Course Overview</div>
-      <h2>What you will learn</h2>
-      <p>By the end of this course you will be able to automate real tasks from your own job — independently, without asking for help.</p>
-    </div>
-
-    <div class="tips-grid">
-      <div class="tip-card">
-        <div class="tip-icon">⚡</div>
-        <h4>Build real automations</h4>
-        <p>Connect Gmail, Sheets, Drive and Forms together to handle repetitive tasks automatically.</p>
+    <!-- STICKY NAV -->
+    <nav class="phase-nav" aria-label="Course sections">
+      <div class="phase-nav-inner">
+        <a href="#overview">Overview</a>
+        <a href="#phase0" class="green">Phase 0 — Logic</a>
+        <a href="#phase1" class="orange">Phase 1 — Zapier</a>
+        <a href="#phase2" class="blue">Phase 2 — n8n</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#tips">Tips</a>
       </div>
-      <div class="tip-card">
-        <div class="tip-icon">🔗</div>
-        <h4>Understand triggers & actions</h4>
-        <p>Learn how event-driven workflows work — the mental model behind every automation tool.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🧠</div>
-        <h4>Graduate to n8n</h4>
-        <p>Move to a more powerful tool for logic-heavy workflows with filters, conditions, and AI.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🚀</div>
-        <h4>Automate your own role</h4>
-        <p>By Week 6, you will build an original automation that saves you real time every week.</p>
-      </div>
-    </div>
+    </nav>
 
-    <div class="warning-box" style="margin-top: 28px;">
-      <span class="icon">💡</span>
-      <div><strong>The most important rule in this course:</strong> Do not just watch. At every stage, pause the video and build what you just saw in your own Zapier or n8n account. The learning only sticks when you build something real.</div>
-    </div>
-  </section>
+    <main>
+      <!-- PHASE 0 -->
+      <section id="phase0">
+        <div class="section-header">
+          <div class="phase-tag green">🟢 Phase 0 · Week 0 — Do this first</div>
+          <h2>Logic training — the foundation of everything</h2>
+          <p>
+            Before touching Zapier or n8n, you need to learn to think like an
+            automation. This section teaches you that thinking through real-life
+            analogies and plain English — then gives you quizzes and scenarios
+            to test yourself. Do not skip this.
+          </p>
+        </div>
 
-  <div class="divider"></div>
+        <!-- PROGRESS -->
+        <div class="phase0-progress">
+          <span class="progress-label">Your progress</span>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <span class="progress-count" id="progressCount">0 / 8 completed</span>
+        </div>
 
-  <!-- PHASE 1 -->
-  <section id="phase1">
-    <div class="section-header">
-      <div class="phase-tag orange">🟠 Phase 1 · Weeks 1–3</div>
-      <h2>Zapier — your starting point</h2>
-      <p>Zapier is the easiest automation tool to learn. It has a visual drag-and-drop interface and connects to all your Google Workspace apps out of the box. You will build your confidence here before moving to n8n.</p>
-    </div>
+        <!-- LESSON: WHAT IS LOGIC? -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text);
+          "
+        >
+          Lesson 1 — What is logic?
+        </h3>
+        <p
+          style="
+            font-size: 14.5px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.7;
+          "
+        >
+          Logic is just decision-making written down. You already use it every
+          single day — you just never called it that. Read through these three
+          everyday examples and you will immediately recognise the pattern.
+        </p>
 
-    <!-- Resource 1 -->
-    <div class="resource-card orange">
-      <div class="resource-number orange">1</div>
-      <h3>Zapier Official "From A to Zap" <span class="free-badge">Free</span></h3>
-      <p>A three-course program made by Zapier itself — always up to date. Covers automating your work, building your first Zap step-by-step, and customizing with multi-step workflows. Completable in under an hour. <strong>Start here. Do this first.</strong></p>
-      <div class="why"><strong>Why it fits you:</strong> The course uses Gmail and Google Sheets as its primary examples throughout — exactly the tools you use every day.</div>
-      <a class="resource-link" href="https://learn.zapier.com/path/zapier-basics-from-a-to-zap" target="_blank">
-        learn.zapier.com
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    </div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+          "
+        >
+          <div
+            style="
+              background: var(--white);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              overflow: hidden;
+              box-shadow: var(--card-shadow);
+            "
+          >
+            <div
+              style="
+                background: #fef0e6;
+                padding: 16px 20px;
+                border-bottom: 1px solid var(--orange-mid);
+              "
+            >
+              <div style="font-size: 24px; margin-bottom: 6px">🚦</div>
+              <div
+                style="
+                  font-size: 13px;
+                  font-weight: 700;
+                  color: var(--orange);
+                  text-transform: uppercase;
+                  letter-spacing: 0.07em;
+                "
+              >
+                Traffic lights
+              </div>
+            </div>
+            <div style="padding: 16px 20px">
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-size: 13px;
+                  line-height: 1.8;
+                  color: var(--text);
+                "
+              >
+                IF light is green<br />
+                → THEN drive<br />
+                <span style="color: var(--text-muted)"
+                  >IF light is red<br />
+                  → THEN stop</span
+                >
+              </div>
+              <p
+                style="
+                  font-size: 12.5px;
+                  color: var(--text-muted);
+                  margin-top: 12px;
+                  line-height: 1.55;
+                "
+              >
+                The condition (light colour) decides which action to take. This
+                is exactly how automation filters work.
+              </p>
+            </div>
+          </div>
 
-    <!-- Resource 2 -->
-    <div class="resource-card orange">
-      <div class="resource-number orange">2</div>
-      <h3>Full Zapier Tutorial for Beginners 2024 — The Social Guide <span class="free-badge">Free · YouTube</span></h3>
-      <p>A comprehensive video guide designed for people completely new to automation. It reinforces the official course with a different teaching style — more visual and narrative. Watch it alongside your Zapier account: pause, build, continue.</p>
-      <div class="why"><strong>Why it fits you:</strong> Seeing the same concepts explained a second way is one of the fastest paths to true understanding.</div>
-      <a class="resource-link" href="https://www.classcentral.com/course/youtube-full-zapier-tutorial-for-beginners-2024-step-by-step-336747" target="_blank">
-        classcentral.com
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    </div>
+          <div
+            style="
+              background: var(--white);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              overflow: hidden;
+              box-shadow: var(--card-shadow);
+            "
+          >
+            <div
+              style="
+                background: var(--blue-light);
+                padding: 16px 20px;
+                border-bottom: 1px solid var(--blue-mid);
+              "
+            >
+              <div style="font-size: 24px; margin-bottom: 6px">🍳</div>
+              <div
+                style="
+                  font-size: 13px;
+                  font-weight: 700;
+                  color: var(--blue);
+                  text-transform: uppercase;
+                  letter-spacing: 0.07em;
+                "
+              >
+                A recipe
+              </div>
+            </div>
+            <div style="padding: 16px 20px">
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-size: 13px;
+                  line-height: 1.8;
+                  color: var(--text);
+                "
+              >
+                WHEN eggs are ready<br />
+                → ADD salt<br />
+                <span style="color: var(--text-muted)"
+                  >IF runny → cook 1 more min<br />
+                  IF firm → serve now</span
+                >
+              </div>
+              <p
+                style="
+                  font-size: 12.5px;
+                  color: var(--text-muted);
+                  margin-top: 12px;
+                  line-height: 1.55;
+                "
+              >
+                A recipe is a sequence of steps with conditions. Automations
+                work exactly the same way — step by step, checking conditions.
+              </p>
+            </div>
+          </div>
 
-    <div class="warning-box">
-      <span class="icon">⚠️</span>
-      <div><strong>About Zapier's free plan:</strong> The free tier allows 5 Zaps and 100 tasks per month — enough to learn and practice. Focus your practice automations on Google Workspace connections (Gmail, Sheets, Drive, Forms) to stay within limits while building the skills most relevant to your job.</div>
-    </div>
+          <div
+            style="
+              background: var(--white);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              overflow: hidden;
+              box-shadow: var(--card-shadow);
+            "
+          >
+            <div
+              style="
+                background: var(--green-light);
+                padding: 16px 20px;
+                border-bottom: 1px solid #a8d8bc;
+              "
+            >
+              <div style="font-size: 24px; margin-bottom: 6px">📬</div>
+              <div
+                style="
+                  font-size: 13px;
+                  font-weight: 700;
+                  color: var(--green);
+                  text-transform: uppercase;
+                  letter-spacing: 0.07em;
+                "
+              >
+                Your email inbox
+              </div>
+            </div>
+            <div style="padding: 16px 20px">
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-size: 13px;
+                  line-height: 1.8;
+                  color: var(--text);
+                "
+              >
+                WHEN email arrives<br />
+                IF from = "boss"<br />
+                → THEN mark urgent<br />
+                <span style="color: var(--text-muted)"
+                  >ELSE → move to folder</span
+                >
+              </div>
+              <p
+                style="
+                  font-size: 12.5px;
+                  color: var(--text-muted);
+                  margin-top: 12px;
+                  line-height: 1.55;
+                "
+              >
+                Gmail's filter rules are literally an automation. You may have
+                set some up already without realising it.
+              </p>
+            </div>
+          </div>
+        </div>
 
-    <!-- Challenge -->
-    <div class="challenge-box orange">
-      <h4>✅ Your Week 1–3 Challenges</h4>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">A</div>
-        <div class="challenge-item-text"><strong>Form → Email:</strong> When a Google Form is submitted → automatically send a Gmail notification to yourself confirming the submission.</div>
-      </div>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">B</div>
-        <div class="challenge-item-text"><strong>Sheet → Email:</strong> When a new row is added to a Google Sheet → automatically send a Gmail summary with the row's content.</div>
-      </div>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">C</div>
-        <div class="challenge-item-text"><strong>Drive → Sheet log:</strong> When a new file is added to a Google Drive folder → automatically log the file name and date in a Google Sheet.</div>
-      </div>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">★</div>
-        <div class="challenge-item-text"><strong>Bonus — your own job:</strong> Find one repetitive task in your daily work and automate it using what you have learned. This is the most important step of Phase 1.</div>
-      </div>
-    </div>
-  </section>
+        <div class="warning-box" style="margin-bottom: 36px">
+          <span class="icon">💡</span>
+          <div>
+            Notice the pattern? Every example follows the same structure:
+            <strong>something happens → check a condition → do something</strong
+            >. That is the entire logic of automation. Everything in Zapier and
+            n8n is just this pattern repeated.
+          </div>
+        </div>
 
-  <div class="divider"></div>
+        <!-- LESSON: IF/THEN -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text);
+          "
+        >
+          Lesson 2 — IF / THEN / ELSE
+        </h3>
+        <p
+          style="
+            font-size: 14.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.7;
+          "
+        >
+          These three words are the grammar of logic. Once you understand them,
+          you can read any automation like a sentence.
+        </p>
 
-  <!-- PHASE 2 -->
-  <section id="phase2">
-    <div class="section-header">
-      <div class="phase-tag blue">🔵 Phase 2 · Weeks 4–6</div>
-      <h2>n8n — next level power</h2>
-      <p>n8n is an open-source automation tool that is far more powerful than Zapier. It handles complex logic, conditions, filters, and even AI workflows. You are ready for this once you have built real Zaps in Phase 1 — do not skip Phase 1.</p>
-    </div>
+        <div
+          style="
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+          "
+        >
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+              gap: 20px;
+              margin-bottom: 24px;
+            "
+          >
+            <div>
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  color: var(--orange);
+                  margin-bottom: 8px;
+                "
+              >
+                IF — the condition
+              </div>
+              <p style="font-size: 14px; line-height: 1.6; color: var(--text)">
+                The question you are asking. Is something true or false? It
+                always has a yes/no answer.
+              </p>
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-size: 13px;
+                  background: var(--bg);
+                  padding: 10px 12px;
+                  border-radius: 8px;
+                  margin-top: 10px;
+                  color: var(--text);
+                  border-left: 3px solid var(--orange);
+                "
+              >
+                IF email subject<br />contains "Invoice"
+              </div>
+            </div>
+            <div>
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  color: var(--green);
+                  margin-bottom: 8px;
+                "
+              >
+                THEN — the yes path
+              </div>
+              <p style="font-size: 14px; line-height: 1.6; color: var(--text)">
+                What happens when the condition is <strong>true</strong>. The
+                automation continues down this path.
+              </p>
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-size: 13px;
+                  background: var(--bg);
+                  padding: 10px 12px;
+                  border-radius: 8px;
+                  margin-top: 10px;
+                  color: var(--text);
+                  border-left: 3px solid var(--green);
+                "
+              >
+                THEN add row<br />to Google Sheets
+              </div>
+            </div>
+            <div>
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  color: var(--blue);
+                  margin-bottom: 8px;
+                "
+              >
+                ELSE — the no path
+              </div>
+              <p style="font-size: 14px; line-height: 1.6; color: var(--text)">
+                What happens when the condition is <strong>false</strong>.
+                Optional — many automations just stop if the condition is not
+                met.
+              </p>
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-size: 13px;
+                  background: var(--bg);
+                  padding: 10px 12px;
+                  border-radius: 8px;
+                  margin-top: 10px;
+                  color: var(--text);
+                  border-left: 3px solid var(--blue);
+                "
+              >
+                ELSE do nothing<br />(skip this email)
+              </div>
+            </div>
+          </div>
 
-    <!-- Resource 3 -->
-    <div class="resource-card blue">
-      <div class="resource-number blue">3</div>
-      <h3>Master n8n in 2 Hours — Jono Catliff <span class="free-badge">Free · YouTube</span></h3>
-      <p>One of the most complete free resources for n8n beginners. Covers the interface, triggers, actions, variable mapping, filters, switches, merge operations, webhooks, HTTP requests, and Google Drive integration — including how to build a full AI agent.</p>
-      <div class="why"><strong>Why it fits you:</strong> The Google Drive integration section directly applies to your stack. Search "Master n8n in 2 Hours Jono Catliff" on YouTube.</div>
-      <a class="resource-link" href="https://www.classcentral.com/course/youtube-master-n8n-in-2-hours-complete-beginner-s-guide-for-2025-489791" target="_blank">
-        classcentral.com — n8n guide
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    </div>
+          <div style="border-top: 1px solid var(--border); padding-top: 20px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--text-muted);
+                margin-bottom: 12px;
+              "
+            >
+              Read this like a sentence:
+            </div>
+            <div
+              style="
+                font-family: 'DM Mono', monospace;
+                font-size: 14px;
+                line-height: 2;
+                background: var(--bg);
+                padding: 16px 20px;
+                border-radius: 10px;
+                color: var(--text);
+              "
+            >
+              WHEN a new email arrives in Gmail<br />
+              &nbsp;&nbsp;IF the subject contains "Invoice"<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;THEN add a row to Google Sheets<br />
+              &nbsp;&nbsp;ELSE<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;ignore it
+            </div>
+            <p
+              style="
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-top: 12px;
+                line-height: 1.6;
+              "
+            >
+              This is a real, working Zapier automation written in plain
+              English. When you build it in the tool, it looks exactly like this
+              — just with buttons and dropdowns instead of text.
+            </p>
+          </div>
+        </div>
 
-    <!-- Resource 4 -->
-    <div class="resource-card blue">
-      <div class="resource-number blue">4</div>
-      <h3>n8n Community Video Course <span class="free-badge">Free · 50+ Videos</span></h3>
-      <p>An actively maintained playlist built by the n8n community, updated weekly. It is designed to be the best n8n course for all levels — from beginner to advanced. Use this as your ongoing reference library after Jono Catliff's guide is done.</p>
-      <div class="why"><strong>Why it fits you:</strong> New videos drop weekly so it always covers the latest n8n features. Bookmark this and return to it regularly.</div>
-      <a class="resource-link" href="https://community.n8n.io/t/50-n8n-video-course-updated-weekly/218703" target="_blank">
-        community.n8n.io
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    </div>
+        <!-- LESSON: SEQUENCES -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin: 36px 0 8px;
+            color: var(--text);
+          "
+        >
+          Lesson 3 — Order matters
+        </h3>
+        <p
+          style="
+            font-size: 14.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.7;
+          "
+        >
+          Automations run step by step, top to bottom. The order of steps is
+          critical. Think of it like giving directions — if you say "turn right"
+          before "go straight", you end up somewhere wrong.
+        </p>
 
-    <div class="warning-box" style="background: var(--blue-light); border-color: var(--blue-mid); color: #0C447C;">
-      <span class="icon">🛠️</span>
-      <div><strong>Getting started with n8n:</strong> Sign up for the free cloud trial at <a href="https://n8n.io" target="_blank" style="color: var(--blue);">n8n.io</a>. No credit card required. This gives you a working n8n environment in your browser — no installation needed to start learning.</div>
-    </div>
+        <div
+          style="
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            box-shadow: var(--card-shadow);
+          "
+        >
+          <div
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.08em;
+              color: var(--text-muted);
+              margin-bottom: 16px;
+            "
+          >
+            Example — Morning routine as an automation:
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0">
+            <div style="display: flex; align-items: flex-start; gap: 16px">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 0;
+                  flex-shrink: 0;
+                "
+              >
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: var(--green-light);
+                    border: 2px solid var(--green);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--green);
+                  "
+                >
+                  1
+                </div>
+                <div
+                  style="width: 2px; height: 36px; background: var(--border)"
+                ></div>
+              </div>
+              <div style="padding-top: 6px; padding-bottom: 20px">
+                <div
+                  style="font-size: 14px; font-weight: 600; color: var(--text)"
+                >
+                  TRIGGER — Alarm goes off at 7am
+                </div>
+                <div
+                  style="
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    margin-top: 3px;
+                  "
+                >
+                  The event that starts everything. Without this, nothing runs.
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 16px">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 0;
+                  flex-shrink: 0;
+                "
+              >
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: #fef0e6;
+                    border: 2px solid var(--orange);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--orange);
+                  "
+                >
+                  2
+                </div>
+                <div
+                  style="width: 2px; height: 36px; background: var(--border)"
+                ></div>
+              </div>
+              <div style="padding-top: 6px; padding-bottom: 20px">
+                <div
+                  style="font-size: 14px; font-weight: 600; color: var(--text)"
+                >
+                  CONDITION — IF it is a weekday
+                </div>
+                <div
+                  style="
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    margin-top: 3px;
+                  "
+                >
+                  Check the condition. If false (weekend), skip to ELSE — sleep
+                  in.
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 16px">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 0;
+                  flex-shrink: 0;
+                "
+              >
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: var(--blue-light);
+                    border: 2px solid var(--blue);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--blue);
+                  "
+                >
+                  3
+                </div>
+                <div
+                  style="width: 2px; height: 36px; background: var(--border)"
+                ></div>
+              </div>
+              <div style="padding-top: 6px; padding-bottom: 20px">
+                <div
+                  style="font-size: 14px; font-weight: 600; color: var(--text)"
+                >
+                  ACTION 1 — Make coffee
+                </div>
+                <div
+                  style="
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    margin-top: 3px;
+                  "
+                >
+                  First action. Must come before getting dressed — you need the
+                  coffee first.
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 16px">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 0;
+                  flex-shrink: 0;
+                "
+              >
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: var(--blue-light);
+                    border: 2px solid var(--blue);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--blue);
+                  "
+                >
+                  4
+                </div>
+              </div>
+              <div style="padding-top: 6px">
+                <div
+                  style="font-size: 14px; font-weight: 600; color: var(--text)"
+                >
+                  ACTION 2 — Get dressed and leave
+                </div>
+                <div
+                  style="
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    margin-top: 3px;
+                  "
+                >
+                  Second action. Depends on step 3 being done first. Order is
+                  critical.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <!-- Challenge -->
-    <div class="challenge-box blue">
-      <h4>✅ Your Week 4–6 Challenges</h4>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">A</div>
-        <div class="challenge-item-text"><strong>Rebuild in n8n:</strong> Take one automation you already built in Zapier and recreate it in n8n. Notice the differences. n8n gives you more control at every step.</div>
-      </div>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">B</div>
-        <div class="challenge-item-text"><strong>Gmail → Sheets with filtering:</strong> Only log emails that contain a specific keyword in the subject line — something Zapier's free tier cannot easily do.</div>
-      </div>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">C</div>
-        <div class="challenge-item-text"><strong>Multi-step Google workflow:</strong> A Google Form submission triggers three things at once: log to Sheet, send Gmail confirmation, and create a Drive folder.</div>
-      </div>
-      <div class="challenge-item">
-        <div class="challenge-item-icon">★</div>
-        <div class="challenge-item-text"><strong>Your own original workflow:</strong> Build one automation from scratch that saves you real time every week. This is your graduation project.</div>
-      </div>
-    </div>
-  </section>
+        <!-- EXTERNAL RESOURCES -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text);
+          "
+        >
+          Practice more — free external resources (Optional)
+        </h3>
+        <p
+          style="
+            font-size: 14.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.7;
+          "
+        >
+          These three resources will sharpen your logic thinking before you
+          touch any automation tool. Do them in order.
+        </p>
 
-  <div class="divider"></div>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 36px;
+          "
+        >
+          <div
+            style="
+              background: var(--white);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              padding: 22px 26px;
+              box-shadow: var(--card-shadow);
+              display: flex;
+              gap: 20px;
+              align-items: flex-start;
+            "
+          >
+            <div
+              style="
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                background: var(--green-light);
+                border: 1px solid #a8d8bc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+                flex-shrink: 0;
+              "
+            >
+              🧩
+            </div>
+            <div style="flex: 1">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  margin-bottom: 6px;
+                  flex-wrap: wrap;
+                "
+              >
+                <span
+                  style="font-size: 15px; font-weight: 600; color: var(--text)"
+                  >IQgenio — Free Logic Puzzles</span
+                >
+                <span
+                  style="
+                    font-size: 10px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    padding: 3px 9px;
+                    border-radius: 100px;
+                    background: var(--green-light);
+                    color: var(--green);
+                    border: 1px solid #a8d8bc;
+                  "
+                  >Free · No signup · Start here</span
+                >
+              </div>
+              <p
+                style="
+                  font-size: 13.5px;
+                  color: var(--text-muted);
+                  line-height: 1.6;
+                  margin-bottom: 12px;
+                "
+              >
+                51 logic puzzles across 7 difficulty levels — no coding, no
+                math, no tech. Just clues and reasoning. You read a situation,
+                use the clues to eliminate impossible answers, and work out what
+                must be true. Starts extremely simple and gets progressively
+                harder.
+                <strong>Do levels 1–10 before moving to the quiz below.</strong>
+              </p>
+              <a
+                href="https://iqgenio.com/brain-training/logic/"
+                target="_blank"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  text-decoration: none;
+                  padding: 7px 14px;
+                  border-radius: 8px;
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  font-family: 'DM Mono', monospace;
+                  background: var(--bg);
+                "
+              >
+                iqgenio.com/brain-training/logic
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
 
-  <!-- SCHEDULE -->
-  <section id="schedule">
-    <div class="section-header">
-      <div class="phase-tag green">📋 Full Schedule</div>
-      <h2>Week by week</h2>
-      <p>Each week has a clear focus, resources to use, and a hands-on task to complete. Do not move to the next week until you have finished the task.</p>
-    </div>
+          <div
+            style="
+              background: var(--white);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              padding: 22px 26px;
+              box-shadow: var(--card-shadow);
+              display: flex;
+              gap: 20px;
+              align-items: flex-start;
+            "
+          >
+            <div
+              style="
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                background: var(--blue-light);
+                border: 1px solid var(--blue-mid);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+                flex-shrink: 0;
+              "
+            >
+              🔍
+            </div>
+            <div style="flex: 1">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  margin-bottom: 6px;
+                  flex-wrap: wrap;
+                "
+              >
+                <span
+                  style="font-size: 15px; font-weight: 600; color: var(--text)"
+                  >BrainBashers — Logic Puzzles</span
+                >
+                <span
+                  style="
+                    font-size: 10px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    padding: 3px 9px;
+                    border-radius: 100px;
+                    background: var(--blue-light);
+                    color: var(--blue);
+                    border: 1px solid var(--blue-mid);
+                  "
+                  >Free · No signup</span
+                >
+              </div>
+              <p
+                style="
+                  font-size: 13.5px;
+                  color: var(--text-muted);
+                  line-height: 1.6;
+                  margin-bottom: 12px;
+                "
+              >
+                Real-world scenario puzzles — bank robberies, contests, dog
+                shows — where you read clues and deduce what happened. No
+                numbers, no code, just reading and reasoning. This is the
+                closest thing to the "if this is true, then that must be true"
+                thinking you will use every day in automation.
+                <strong
+                  >Pick any puzzle marked with one ? (easiest) and work
+                  up.</strong
+                >
+              </p>
+              <a
+                href="https://www.brainbashers.com/logic.asp"
+                target="_blank"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  text-decoration: none;
+                  padding: 7px 14px;
+                  border-radius: 8px;
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  font-family: 'DM Mono', monospace;
+                  background: var(--bg);
+                "
+              >
+                brainbashers.com/logic
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
 
-    <table class="schedule-table">
-      <thead>
-        <tr>
-          <th>Week</th>
-          <th>Focus</th>
-          <th>Resources</th>
-          <th>Task to complete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Week 1 <span class="week-phase orange">Zapier</span></td>
-          <td>Zapier basics</td>
-          <td>Official "A to Zap" + YouTube beginner video</td>
-          <td>Google Form → Gmail notification</td>
-        </tr>
-        <tr>
-          <td>Week 2 <span class="week-phase orange">Zapier</span></td>
-          <td>Build real Zaps</td>
-          <td>Zapier free tier practice</td>
-          <td>Sheet → Email + Drive → Sheet log</td>
-        </tr>
-        <tr>
-          <td>Week 3 <span class="week-phase orange">Zapier</span></td>
-          <td>Apply to your job</td>
-          <td>Zapier templates library</td>
-          <td>Automate one real task from your own role</td>
-        </tr>
-        <tr>
-          <td>Week 4 <span class="week-phase blue">n8n</span></td>
-          <td>n8n intro</td>
-          <td>Jono Catliff 2-hour guide</td>
-          <td>Recreate a Zapier workflow in n8n</td>
-        </tr>
-        <tr>
-          <td>Week 5 <span class="week-phase blue">n8n</span></td>
-          <td>n8n intermediate</td>
-          <td>n8n community playlist (first 15 videos)</td>
-          <td>Gmail + Sheets + Drive multi-step workflow</td>
-        </tr>
-        <tr>
-          <td>Week 6+ <span class="week-phase blue">n8n</span></td>
-          <td>Expert building</td>
-          <td>n8n community playlist (ongoing)</td>
-          <td>One fully original automation from scratch</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+          <div
+            style="
+              background: var(--white);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              padding: 22px 26px;
+              box-shadow: var(--card-shadow);
+              display: flex;
+              gap: 20px;
+              align-items: flex-start;
+            "
+          >
+            <div
+              style="
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                background: #fef0e6;
+                border: 1px solid var(--orange-mid);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+                flex-shrink: 0;
+              "
+            >
+              🏆
+            </div>
+            <div style="flex: 1">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  margin-bottom: 6px;
+                  flex-wrap: wrap;
+                "
+              >
+                <span
+                  style="font-size: 15px; font-weight: 600; color: var(--text)"
+                  >Superstar Worksheets — Logic Grid Puzzles</span
+                >
+                <span
+                  style="
+                    font-size: 10px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    padding: 3px 9px;
+                    border-radius: 100px;
+                    background: #fef0e6;
+                    color: var(--orange);
+                    border: 1px solid var(--orange-mid);
+                  "
+                  >Free · Printable PDF</span
+                >
+              </div>
+              <p
+                style="
+                  font-size: 13.5px;
+                  color: var(--text-muted);
+                  line-height: 1.6;
+                  margin-bottom: 12px;
+                "
+              >
+                Grid puzzles where you match people to attributes using clues —
+                e.g. "Ahmed does not own the blue car. The person with the red
+                car works in finance." You use a simple grid to eliminate
+                options until only one answer remains. This trains exactly the
+                conditional elimination thinking used in automation filters.
+                <strong
+                  >Print a beginner puzzle and solve it on paper — that physical
+                  process cements the thinking.</strong
+                >
+              </p>
+              <a
+                href="https://superstarworksheets.com/logic-worksheets/logic-puzzles/"
+                target="_blank"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  text-decoration: none;
+                  padding: 7px 14px;
+                  border-radius: 8px;
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  font-family: 'DM Mono', monospace;
+                  background: var(--bg);
+                "
+              >
+                superstarworksheets.com/logic-puzzles
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
 
-  <div class="divider"></div>
+        <!-- CORE CONCEPTS -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 18px;
+            color: var(--text);
+          "
+        >
+          Now — the 4 concepts behind every automation
+        </h3>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-icon">⚡</div>
+            <h4>Trigger</h4>
+            <p>
+              The event that starts the automation. Something that
+              <em>happens</em>.
+            </p>
+            <div class="example">A new email arrives in Gmail</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">🎯</div>
+            <h4>Action</h4>
+            <p>What the automation <em>does</em> after the trigger fires.</p>
+            <div class="example">→ Add a row to Google Sheets</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">🔍</div>
+            <h4>Condition (Filter)</h4>
+            <p>
+              A rule that decides <em>whether</em> to continue. Only proceed if
+              something is true.
+            </p>
+            <div class="example">Only IF subject contains "Invoice"</div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">📦</div>
+            <h4>Variable (Data)</h4>
+            <p>
+              A piece of information <em>passed</em> from one step to the next.
+            </p>
+            <div class="example">Use {{sender_name}} in the reply</div>
+          </div>
+        </div>
 
-  <!-- TIPS -->
-  <section id="tips">
-    <div class="section-header">
-      <div class="phase-tag green">💡 Tips for Success</div>
-      <h2>How to get the most from this course</h2>
-    </div>
+        <div class="warning-box" style="margin-bottom: 32px">
+          <span class="icon">💡</span>
+          <div>
+            Every automation you will ever build — in Zapier, n8n, or any other
+            tool — is just a combination of these four things. Learn them now
+            and the tools will make sense immediately.
+          </div>
+        </div>
 
-    <div class="tips-grid">
-      <div class="tip-card">
-        <div class="tip-icon">🏗️</div>
-        <h4>Always build, never just watch</h4>
-        <p>Pause the video after each concept and recreate what you just saw in your own account. This is non-negotiable.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🎯</div>
-        <h4>Use real tasks from your job</h4>
-        <p>As early as Week 3, automate something you actually do every day. Personal relevance makes everything stick faster.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🐢</div>
-        <h4>Do not rush to n8n</h4>
-        <p>n8n has a steeper learning curve. Employees who skip Phase 1 often struggle. Finish all three Zapier weeks first.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🔍</div>
-        <h4>When you get stuck, search n8n community</h4>
-        <p>The n8n community forum is extremely active. Almost every question you will have has already been answered there.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">📝</div>
-        <h4>Document your workflows</h4>
-        <p>Add notes and descriptions to every workflow you build. Future-you will thank you — and so will your colleagues.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🤝</div>
-        <h4>Share what you build</h4>
-        <p>Show your automations to your team. Teaching someone else is the fastest way to deepen your own understanding.</p>
-      </div>
-    </div>
-  </section>
+        <!-- QUIZ SECTION -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text);
+          "
+        >
+          Part 1 — Concept check
+        </h3>
+        <p
+          style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px"
+        >
+          Read each question and pick the best answer. Instant feedback after
+          each one.
+        </p>
 
-</main>
+        <!-- Q1 -->
+        <div class="quiz-block" id="q1">
+          <div class="q-label">Question 1 of 4</div>
+          <div class="q-text">
+            A Google Form is submitted by a customer. In automation terms, what
+            is this?
+          </div>
+          <div class="quiz-options">
+            <button
+              class="quiz-option"
+              data-qid="q1"
+              data-correct="false"
+              data-msg="A trigger fires when something happens. A form submission is an event so it is a trigger, not an action."
+            >
+              <span class="opt-indicator">A</span> An action — it does something
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q1"
+              data-correct="true"
+              data-msg="Correct! A form submission is a trigger. It is the event that starts the automation. Everything after this — sending an email, logging data — are the actions."
+            >
+              <span class="opt-indicator">B</span> A trigger — it starts the
+              workflow
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q1"
+              data-correct="false"
+              data-msg="A filter checks whether a condition is true before continuing. A form submission is not checking anything — it is the event that starts the workflow."
+            >
+              <span class="opt-indicator">C</span> A filter — it checks a
+              condition
+            </button>
+          </div>
+          <div class="quiz-feedback" id="q1-feedback"></div>
+        </div>
 
-<footer>
-  <p>Automation Training Program · Google Workspace Edition</p>
-  <p style="margin-top: 6px;">Built for your team · <strong>Free resources only</strong> · Zero to independent in 6 weeks</p>
-</footer>
+        <!-- Q2 -->
+        <div class="quiz-block" id="q2">
+          <div class="q-label">Question 2 of 4</div>
+          <div class="q-text">
+            You want your automation to only send an email if the form response
+            says "Urgent". What concept handles this?
+          </div>
+          <div class="quiz-options">
+            <button
+              class="quiz-option"
+              data-qid="q2"
+              data-correct="false"
+              data-msg="A trigger is what starts the workflow. It does not decide whether to continue — that is the job of a condition."
+            >
+              <span class="opt-indicator">A</span> A trigger
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q2"
+              data-correct="false"
+              data-msg="An action is what the automation does — like sending an email. But before you send it, you need to check if the condition is true."
+            >
+              <span class="opt-indicator">B</span> An action
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q2"
+              data-correct="true"
+              data-msg="Correct! A condition (or filter) checks whether a rule is true before continuing. Only proceed IF the response contains Urgent is a classic filter. If false, the automation stops there."
+            >
+              <span class="opt-indicator">C</span> A condition / filter
+            </button>
+          </div>
+          <div class="quiz-feedback" id="q2-feedback"></div>
+        </div>
 
-</body>
+        <!-- Q3 -->
+        <div class="quiz-block" id="q3">
+          <div class="q-label">Question 3 of 4</div>
+          <div class="q-text">
+            Your automation grabs the customer's name from a form and uses it in
+            the subject line of an auto-reply email: "Hi Ahmed, we got your
+            request." What is "Ahmed" in this context?
+          </div>
+          <div class="quiz-options">
+            <button
+              class="quiz-option"
+              data-qid="q3"
+              data-correct="true"
+              data-msg="Correct! Ahmed is a variable — a piece of data (the customer name) captured in one step and passed forward into the email subject line. Variables are what make automations feel personal and smart."
+            >
+              <span class="opt-indicator">A</span> A variable — data passed
+              between steps
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q3"
+              data-correct="false"
+              data-msg="A trigger is an event, not a piece of data. Ahmed is the customer name captured from the form — a variable that travels through the workflow."
+            >
+              <span class="opt-indicator">B</span> A trigger — it started the
+              process
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q3"
+              data-correct="false"
+              data-msg="A condition checks whether something is true or false. Ahmed is not a condition — it is a value, a piece of data passed from the form step into the email step."
+            >
+              <span class="opt-indicator">C</span> A condition — it filtered the
+              result
+            </button>
+          </div>
+          <div class="quiz-feedback" id="q3-feedback"></div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="quiz-block" id="q4">
+          <div class="q-label">Question 4 of 4</div>
+          <div class="q-text">
+            Put these steps in the right order for an automation: "Send a Gmail
+            reply" / "A new file is uploaded to Google Drive" / "Check if the
+            file name contains 'Report'"
+          </div>
+          <div class="quiz-options">
+            <button
+              class="quiz-option"
+              data-qid="q4"
+              data-correct="false"
+              data-msg="Not quite. The trigger (file uploaded) must come first — it starts the workflow. Then the filter checks the file name. Then the action sends the email."
+            >
+              <span class="opt-indicator">A</span> Send Gmail → Upload to Drive
+              → Check file name
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q4"
+              data-correct="true"
+              data-msg="Correct! Trigger first (file uploaded), then filter (check the name), then action (send email). This is the standard Trigger → Condition → Action pattern you will use in almost every workflow you build."
+            >
+              <span class="opt-indicator">B</span> Upload to Drive → Check file
+              name → Send Gmail
+            </button>
+            <button
+              class="quiz-option"
+              data-qid="q4"
+              data-correct="false"
+              data-msg="Close, but the filter (check file name) must come before the action (send Gmail). You need to verify the condition is true before doing anything."
+            >
+              <span class="opt-indicator">C</span> Upload to Drive → Send Gmail
+              → Check file name
+            </button>
+          </div>
+          <div class="quiz-feedback" id="q4-feedback"></div>
+        </div>
+
+        <!-- SCENARIO BUILDER -->
+        <h3
+          style="
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin: 36px 0 8px;
+            color: var(--text);
+          "
+        >
+          Part 2 — Build the logic
+        </h3>
+        <p
+          style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px"
+        >
+          Real workplace scenarios. Map each one to the right automation logic
+          before touching any tool.
+        </p>
+
+        <!-- Scenario 1 -->
+        <div class="scenario-builder" id="s1">
+          <h4>Scenario 1 — The invoice tracker</h4>
+          <div class="s-desc">
+            Your team receives invoices by email. You want to automatically log
+            every invoice in a Google Sheet so nothing gets missed. Map the
+            logic.
+          </div>
+          <div class="flow-row">
+            <span class="flow-label trigger">Trigger</span>
+            <select class="flow-select" id="s1-trigger">
+              <option value="">Choose the trigger...</option>
+              <option value="wrong">A new row is added to Sheets</option>
+              <option value="correct">A new email arrives in Gmail</option>
+              <option value="wrong">A file is uploaded to Drive</option>
+              <option value="wrong">A timer fires every hour</option>
+            </select>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label condition">Condition</span>
+            <span class="flow-arrow">→</span>
+            <select class="flow-select" id="s1-condition">
+              <option value="">Choose the filter...</option>
+              <option value="correct">
+                Only if subject contains "Invoice"
+              </option>
+              <option value="wrong">Only if the file is a PDF</option>
+              <option value="wrong">Only if sender is your boss</option>
+              <option value="none">No filter — run for all emails</option>
+            </select>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label action">Action</span>
+            <span class="flow-arrow">→</span>
+            <select class="flow-select" id="s1-action">
+              <option value="">Choose the action...</option>
+              <option value="correct">Add a row to Google Sheets</option>
+              <option value="wrong">Send a Gmail reply</option>
+              <option value="wrong">Create a Google Form</option>
+              <option value="wrong">Upload a file to Drive</option>
+            </select>
+          </div>
+          <button class="check-btn" onclick="checkScenario('s1')">
+            Check my logic
+          </button>
+          <div class="flow-result" id="s1-result"></div>
+        </div>
+
+        <!-- Scenario 2 -->
+        <div class="scenario-builder" id="s2">
+          <h4>Scenario 2 — The new employee welcome</h4>
+          <div class="s-desc">
+            Whenever someone fills out your onboarding Google Form, you want to
+            send them a personalised welcome email using their name from the
+            form.
+          </div>
+          <div class="flow-row">
+            <span class="flow-label trigger">Trigger</span>
+            <select class="flow-select" id="s2-trigger">
+              <option value="">Choose the trigger...</option>
+              <option value="wrong">A new email arrives in Gmail</option>
+              <option value="correct">A Google Form is submitted</option>
+              <option value="wrong">A file is added to Drive</option>
+              <option value="wrong">
+                A new row is added to Sheets manually
+              </option>
+            </select>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label condition">Condition</span>
+            <span class="flow-arrow">→</span>
+            <select class="flow-select" id="s2-condition">
+              <option value="">Choose the filter...</option>
+              <option value="wrong">Only if the name contains "Manager"</option>
+              <option value="wrong">
+                Only if the email is from a Gmail address
+              </option>
+              <option value="none">No filter — run for every submission</option>
+              <option value="wrong">Only if submitted on a weekday</option>
+            </select>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label action">Action</span>
+            <span class="flow-arrow">→</span>
+            <select class="flow-select" id="s2-action">
+              <option value="">Choose the action...</option>
+              <option value="wrong">Add a row to Sheets</option>
+              <option value="correct">
+                Send a Gmail with their name in the subject
+              </option>
+              <option value="wrong">Create a new Google Form</option>
+              <option value="wrong">Upload a file to Drive</option>
+            </select>
+          </div>
+          <button class="check-btn" onclick="checkScenario('s2')">
+            Check my logic
+          </button>
+          <div class="flow-result" id="s2-result"></div>
+        </div>
+
+        <!-- Scenario 3 — written -->
+        <div class="scenario-builder" id="s3">
+          <h4>Scenario 3 — Your own job (written exercise)</h4>
+          <div class="s-desc">
+            Think of one repetitive task you do manually every week. Write the
+            automation logic for it using the boxes below. There is no wrong
+            answer — the goal is to think in Trigger → Condition → Action.
+          </div>
+          <div style="margin-bottom: 14px">
+            <label
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--green);
+                display: block;
+                margin-bottom: 6px;
+              "
+              >⚡ My Trigger</label
+            >
+            <textarea
+              id="s3-trigger"
+              placeholder="e.g. When a client fills out the contact form on our website..."
+              style="
+                width: 100%;
+                padding: 12px 14px;
+                border: 1.5px solid var(--border);
+                border-radius: 10px;
+                font-size: 14px;
+                font-family: 'DM Sans', sans-serif;
+                color: var(--text);
+                background: var(--bg);
+                resize: vertical;
+                min-height: 60px;
+                line-height: 1.5;
+              "
+            ></textarea>
+          </div>
+          <div style="margin-bottom: 14px">
+            <label
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--green);
+                display: block;
+                margin-bottom: 6px;
+              "
+              >🔍 My Condition (optional — skip if none)</label
+            >
+            <textarea
+              id="s3-condition"
+              placeholder="e.g. Only if they selected 'Enterprise' as their company size..."
+              style="
+                width: 100%;
+                padding: 12px 14px;
+                border: 1.5px solid var(--border);
+                border-radius: 10px;
+                font-size: 14px;
+                font-family: 'DM Sans', sans-serif;
+                color: var(--text);
+                background: var(--bg);
+                resize: vertical;
+                min-height: 60px;
+                line-height: 1.5;
+              "
+            ></textarea>
+          </div>
+          <div style="margin-bottom: 16px">
+            <label
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--green);
+                display: block;
+                margin-bottom: 6px;
+              "
+              >🎯 My Action</label
+            >
+            <textarea
+              id="s3-action"
+              placeholder="e.g. Send me a Gmail notification with their name and company..."
+              style="
+                width: 100%;
+                padding: 12px 14px;
+                border: 1.5px solid var(--border);
+                border-radius: 10px;
+                font-size: 14px;
+                font-family: 'DM Sans', sans-serif;
+                color: var(--text);
+                background: var(--bg);
+                resize: vertical;
+                min-height: 60px;
+                line-height: 1.5;
+              "
+            ></textarea>
+          </div>
+          <button class="check-btn" onclick="checkWritten()">
+            Mark as complete
+          </button>
+          <div class="flow-result" id="s3-result"></div>
+        </div>
+
+        <div class="challenge-box green" style="margin-top: 8px">
+          <h4>✅ You are ready for Phase 1 when...</h4>
+          <div class="challenge-item">
+            <div
+              class="challenge-item-icon"
+              style="background: rgba(46, 125, 82, 0.15); color: var(--green)"
+            >
+              1
+            </div>
+            <div class="challenge-item-text">
+              You can instantly identify the trigger, action, and condition in
+              any workflow someone describes to you.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div
+              class="challenge-item-icon"
+              style="background: rgba(46, 125, 82, 0.15); color: var(--green)"
+            >
+              2
+            </div>
+            <div class="challenge-item-text">
+              You have completed all 4 quiz questions and both scenario builders
+              above.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div
+              class="challenge-item-icon"
+              style="background: rgba(46, 125, 82, 0.15); color: var(--green)"
+            >
+              3
+            </div>
+            <div class="challenge-item-text">
+              You have written out the logic for a real task from your own job
+              in Scenario 3 — even roughly.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- OVERVIEW -->
+      <section id="overview">
+        <div class="section-header">
+          <div class="phase-tag green">Course Overview</div>
+          <h2>What you will learn</h2>
+          <p>
+            By the end of this course you will be able to automate real tasks
+            from your own job — independently, without asking for help.
+          </p>
+        </div>
+
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-icon">⚡</div>
+            <h4>Build real automations</h4>
+            <p>
+              Connect Gmail, Sheets, Drive and Forms together to handle
+              repetitive tasks automatically.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🔗</div>
+            <h4>Understand triggers & actions</h4>
+            <p>
+              Learn how event-driven workflows work — the mental model behind
+              every automation tool.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🧠</div>
+            <h4>Graduate to n8n</h4>
+            <p>
+              Move to a more powerful tool for logic-heavy workflows with
+              filters, conditions, and AI.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🚀</div>
+            <h4>Automate your own role</h4>
+            <p>
+              By Week 6, you will build an original automation that saves you
+              real time every week.
+            </p>
+          </div>
+        </div>
+
+        <div class="warning-box" style="margin-top: 28px">
+          <span class="icon">💡</span>
+          <div>
+            <strong>The most important rule in this course:</strong> Do not just
+            watch. At every stage, pause the video and build what you just saw
+            in your own Zapier or n8n account. The learning only sticks when you
+            build something real.
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- PHASE 1 -->
+      <section id="phase1">
+        <div class="section-header">
+          <div class="phase-tag orange">🟠 Phase 1 · Weeks 1–3</div>
+          <h2>Zapier — your starting point</h2>
+          <p>
+            Zapier is the easiest automation tool to learn. It has a visual
+            drag-and-drop interface and connects to all your Google Workspace
+            apps out of the box. You will build your confidence here before
+            moving to n8n.
+          </p>
+        </div>
+
+        <!-- Resource 1 -->
+        <div class="resource-card orange">
+          <div class="resource-number orange">1</div>
+          <h3>
+            Zapier Official "From A to Zap" <span class="free-badge">Free</span>
+          </h3>
+          <p>
+            A three-course program made by Zapier itself — always up to date.
+            Covers automating your work, building your first Zap step-by-step,
+            and customizing with multi-step workflows. Completable in under an
+            hour. <strong>Start here. Do this first.</strong>
+          </p>
+          <div class="why">
+            <strong>Why it fits you:</strong> The course uses Gmail and Google
+            Sheets as its primary examples throughout — exactly the tools you
+            use every day.
+          </div>
+          <a
+            class="resource-link"
+            href="https://learn.zapier.com/path/zapier-basics-from-a-to-zap"
+            target="_blank"
+          >
+            learn.zapier.com
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Resource 2 -->
+        <div class="resource-card orange">
+          <div class="resource-number orange">2</div>
+          <h3>
+            Full Zapier Tutorial for Beginners 2024 — The Social Guide
+            <span class="free-badge">Free · YouTube</span>
+          </h3>
+          <p>
+            A comprehensive video guide designed for people completely new to
+            automation. It reinforces the official course with a different
+            teaching style — more visual and narrative. Watch it alongside your
+            Zapier account: pause, build, continue.
+          </p>
+          <div class="why">
+            <strong>Why it fits you:</strong> Seeing the same concepts explained
+            a second way is one of the fastest paths to true understanding.
+          </div>
+          <a
+            class="resource-link"
+            href="https://www.classcentral.com/course/youtube-full-zapier-tutorial-for-beginners-2024-step-by-step-336747"
+            target="_blank"
+          >
+            classcentral.com
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <div class="warning-box">
+          <span class="icon">⚠️</span>
+          <div>
+            <strong>About Zapier's free plan:</strong> The free tier allows 5
+            Zaps and 100 tasks per month — enough to learn and practice. Focus
+            your practice automations on Google Workspace connections (Gmail,
+            Sheets, Drive, Forms) to stay within limits while building the
+            skills most relevant to your job.
+          </div>
+        </div>
+
+        <!-- Challenge -->
+        <div class="challenge-box orange">
+          <h4>✅ Your Week 1–3 Challenges</h4>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">A</div>
+            <div class="challenge-item-text">
+              <strong>Form → Email:</strong> When a Google Form is submitted →
+              automatically send a Gmail notification to yourself confirming the
+              submission.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">B</div>
+            <div class="challenge-item-text">
+              <strong>Sheet → Email:</strong> When a new row is added to a
+              Google Sheet → automatically send a Gmail summary with the row's
+              content.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">C</div>
+            <div class="challenge-item-text">
+              <strong>Drive → Sheet log:</strong> When a new file is added to a
+              Google Drive folder → automatically log the file name and date in
+              a Google Sheet.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">★</div>
+            <div class="challenge-item-text">
+              <strong>Bonus — your own job:</strong> Find one repetitive task in
+              your daily work and automate it using what you have learned. This
+              is the most important step of Phase 1.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- PHASE 2 -->
+      <section id="phase2">
+        <div class="section-header">
+          <div class="phase-tag blue">🔵 Phase 2 · Weeks 4–6</div>
+          <h2>n8n — next level power</h2>
+          <p>
+            n8n is an open-source automation tool that is far more powerful than
+            Zapier. It handles complex logic, conditions, filters, and even AI
+            workflows. You are ready for this once you have built real Zaps in
+            Phase 1 — do not skip Phase 1.
+          </p>
+        </div>
+
+        <!-- Resource 3 -->
+        <div class="resource-card blue">
+          <div class="resource-number blue">3</div>
+          <h3>
+            Master n8n in 2 Hours — Jono Catliff
+            <span class="free-badge">Free · YouTube</span>
+          </h3>
+          <p>
+            One of the most complete free resources for n8n beginners. Covers
+            the interface, triggers, actions, variable mapping, filters,
+            switches, merge operations, webhooks, HTTP requests, and Google
+            Drive integration — including how to build a full AI agent.
+          </p>
+          <div class="why">
+            <strong>Why it fits you:</strong> The Google Drive integration
+            section directly applies to your stack. Search "Master n8n in 2
+            Hours Jono Catliff" on YouTube.
+          </div>
+          <a
+            class="resource-link"
+            href="https://www.classcentral.com/course/youtube-master-n8n-in-2-hours-complete-beginner-s-guide-for-2025-489791"
+            target="_blank"
+          >
+            classcentral.com — n8n guide
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Resource 4 -->
+        <div class="resource-card blue">
+          <div class="resource-number blue">4</div>
+          <h3>
+            n8n Community Video Course
+            <span class="free-badge">Free · 50+ Videos</span>
+          </h3>
+          <p>
+            An actively maintained playlist built by the n8n community, updated
+            weekly. It is designed to be the best n8n course for all levels —
+            from beginner to advanced. Use this as your ongoing reference
+            library after Jono Catliff's guide is done.
+          </p>
+          <div class="why">
+            <strong>Why it fits you:</strong> New videos drop weekly so it
+            always covers the latest n8n features. Bookmark this and return to
+            it regularly.
+          </div>
+          <a
+            class="resource-link"
+            href="https://community.n8n.io/t/50-n8n-video-course-updated-weekly/218703"
+            target="_blank"
+          >
+            community.n8n.io
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <div
+          class="warning-box"
+          style="
+            background: var(--blue-light);
+            border-color: var(--blue-mid);
+            color: #0c447c;
+          "
+        >
+          <span class="icon">🛠️</span>
+          <div>
+            <strong>Getting started with n8n:</strong> Sign up for the free
+            cloud trial at
+            <a href="https://n8n.io" target="_blank" style="color: var(--blue)"
+              >n8n.io</a
+            >. No credit card required. This gives you a working n8n environment
+            in your browser — no installation needed to start learning.
+          </div>
+        </div>
+
+        <!-- Challenge -->
+        <div class="challenge-box blue">
+          <h4>✅ Your Week 4–6 Challenges</h4>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">A</div>
+            <div class="challenge-item-text">
+              <strong>Rebuild in n8n:</strong> Take one automation you already
+              built in Zapier and recreate it in n8n. Notice the differences.
+              n8n gives you more control at every step.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">B</div>
+            <div class="challenge-item-text">
+              <strong>Gmail → Sheets with filtering:</strong> Only log emails
+              that contain a specific keyword in the subject line — something
+              Zapier's free tier cannot easily do.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">C</div>
+            <div class="challenge-item-text">
+              <strong>Multi-step Google workflow:</strong> A Google Form
+              submission triggers three things at once: log to Sheet, send Gmail
+              confirmation, and create a Drive folder.
+            </div>
+          </div>
+          <div class="challenge-item">
+            <div class="challenge-item-icon">★</div>
+            <div class="challenge-item-text">
+              <strong>Your own original workflow:</strong> Build one automation
+              from scratch that saves you real time every week. This is your
+              graduation project.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- SCHEDULE -->
+      <section id="schedule">
+        <div class="section-header">
+          <div class="phase-tag green">📋 Full Schedule</div>
+          <h2>Week by week</h2>
+          <p>
+            Each week has a clear focus, resources to use, and a hands-on task
+            to complete. Do not move to the next week until you have finished
+            the task.
+          </p>
+        </div>
+
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Focus</th>
+              <th>Resources</th>
+              <th>Task to complete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                Week 0
+                <span
+                  class="week-phase"
+                  style="background: var(--green-light); color: var(--green)"
+                  >Logic</span
+                >
+              </td>
+              <td>Logic thinking</td>
+              <td>Phase 0 exercises on this page</td>
+              <td>Complete all quizzes + write your own scenario</td>
+            </tr>
+            <tr>
+              <td>Week 1 <span class="week-phase orange">Zapier</span></td>
+              <td>Zapier basics</td>
+              <td>Official "A to Zap" + YouTube beginner video</td>
+              <td>Google Form → Gmail notification</td>
+            </tr>
+            <tr>
+              <td>Week 2 <span class="week-phase orange">Zapier</span></td>
+              <td>Build real Zaps</td>
+              <td>Zapier free tier practice</td>
+              <td>Sheet → Email + Drive → Sheet log</td>
+            </tr>
+            <tr>
+              <td>Week 3 <span class="week-phase orange">Zapier</span></td>
+              <td>Apply to your job</td>
+              <td>Zapier templates library</td>
+              <td>Automate one real task from your own role</td>
+            </tr>
+            <tr>
+              <td>Week 4 <span class="week-phase blue">n8n</span></td>
+              <td>n8n intro</td>
+              <td>Jono Catliff 2-hour guide</td>
+              <td>Recreate a Zapier workflow in n8n</td>
+            </tr>
+            <tr>
+              <td>Week 5 <span class="week-phase blue">n8n</span></td>
+              <td>n8n intermediate</td>
+              <td>n8n community playlist (first 15 videos)</td>
+              <td>Gmail + Sheets + Drive multi-step workflow</td>
+            </tr>
+            <tr>
+              <td>Week 6+ <span class="week-phase blue">n8n</span></td>
+              <td>Expert building</td>
+              <td>n8n community playlist (ongoing)</td>
+              <td>One fully original automation from scratch</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- TIPS -->
+      <section id="tips">
+        <div class="section-header">
+          <div class="phase-tag green">💡 Tips for Success</div>
+          <h2>How to get the most from this course</h2>
+        </div>
+
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-icon">🏗️</div>
+            <h4>Always build, never just watch</h4>
+            <p>
+              Pause the video after each concept and recreate what you just saw
+              in your own account. This is non-negotiable.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🎯</div>
+            <h4>Use real tasks from your job</h4>
+            <p>
+              As early as Week 3, automate something you actually do every day.
+              Personal relevance makes everything stick faster.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🐢</div>
+            <h4>Do not rush to n8n</h4>
+            <p>
+              n8n has a steeper learning curve. Employees who skip Phase 1 often
+              struggle. Finish all three Zapier weeks first.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🔍</div>
+            <h4>When you get stuck, search n8n community</h4>
+            <p>
+              The n8n community forum is extremely active. Almost every question
+              you will have has already been answered there.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">📝</div>
+            <h4>Document your workflows</h4>
+            <p>
+              Add notes and descriptions to every workflow you build. Future-you
+              will thank you — and so will your colleagues.
+            </p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🤝</div>
+            <h4>Share what you build</h4>
+            <p>
+              Show your automations to your team. Teaching someone else is the
+              fastest way to deepen your own understanding.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Automation Training Program · Abdullah Usman</p>
+      <p style="margin-top: 6px">
+        Built for your team · <strong>Free resources only</strong> · Zero to
+        independent in 6 weeks
+      </p>
+    </footer>
+
+    <script>
+      var completed = {};
+
+      function updateProgress() {
+        var total = 8;
+        var done = Object.keys(completed).length;
+        document.getElementById("progressFill").style.width =
+          Math.round((done / total) * 100) + "%";
+        document.getElementById("progressCount").textContent =
+          done + " / " + total + " completed";
+      }
+
+      function answerQuiz(qid, btn, isCorrect, msg) {
+        var block = document.getElementById(qid);
+        var btns = block.querySelectorAll(".quiz-option");
+        btns.forEach(function (b) {
+          b.disabled = true;
+        });
+        var indicator = btn.querySelector(".opt-indicator");
+        var feedback = document.getElementById(qid + "-feedback");
+        if (isCorrect) {
+          btn.classList.add("correct");
+          indicator.textContent = "✓";
+          feedback.className = "quiz-feedback correct";
+          feedback.textContent = "✓ " + msg;
+          if (!completed[qid]) {
+            completed[qid] = true;
+            updateProgress();
+          }
+        } else {
+          btn.classList.add("wrong");
+          indicator.textContent = "✗";
+          feedback.className = "quiz-feedback wrong";
+          feedback.textContent = "✗ " + msg;
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest(".quiz-option[data-qid]");
+        if (!btn || btn.disabled) return;
+        var qid = btn.dataset.qid;
+        var isCorrect = btn.dataset.correct === "true";
+        var msg = btn.dataset.msg;
+        answerQuiz(qid, btn, isCorrect, msg);
+      });
+
+      function checkScenario(sid) {
+        var tVal = document.getElementById(sid + "-trigger").value;
+        var cVal = document.getElementById(sid + "-condition").value;
+        var aVal = document.getElementById(sid + "-action").value;
+        var result = document.getElementById(sid + "-result");
+        if (!tVal || !cVal || !aVal) {
+          result.className = "flow-result show bad";
+          result.textContent =
+            "Choose an option for every step before checking.";
+          return;
+        }
+        var tOk = tVal === "correct";
+        var cOk = sid === "s1" ? cVal === "correct" : cVal === "none";
+        var aOk = aVal === "correct";
+        if (tOk && cOk && aOk) {
+          result.className = "flow-result show good";
+          result.textContent =
+            "Perfect logic! You have the right trigger, condition, and action. This is exactly how you would build this in Zapier or n8n.";
+          if (!completed[sid]) {
+            completed[sid] = true;
+            updateProgress();
+          }
+        } else {
+          var hints = [];
+          if (!tOk)
+            hints.push(
+              "the trigger is not quite right — think about what event starts this workflow"
+            );
+          if (!cOk)
+            hints.push(
+              "reconsider the condition — should this run for everything, or only specific cases?"
+            );
+          if (!aOk)
+            hints.push(
+              "the action is off — what should the automation actually do at the end?"
+            );
+          result.className = "flow-result show bad";
+          result.textContent =
+            "Not quite. Hint: " + hints.join("; ") + ". Try again.";
+        }
+      }
+
+      function checkWritten() {
+        var t = document.getElementById("s3-trigger").value.trim();
+        var a = document.getElementById("s3-action").value.trim();
+        var result = document.getElementById("s3-result");
+        if (!t || !a) {
+          result.className = "flow-result show bad";
+          result.textContent =
+            "Fill in at least the Trigger and Action before marking complete. The condition is optional.";
+          return;
+        }
+        result.className = "flow-result show good";
+        result.textContent =
+          "Marked as complete! You have just written the specification for a real automation. When you reach Week 3, come back to this and build it in Zapier.";
+        if (!completed["s3"]) {
+          completed["s3"] = true;
+          updateProgress();
+        }
+      }
+    </script>
+  </body>
 </html>
